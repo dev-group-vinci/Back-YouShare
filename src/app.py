@@ -21,8 +21,9 @@ if __name__ == '__main__':
 
     api.add_route('/json', HelloWorldJson())
     api.add_route('/text', HelloWorldText())
-    api.add_route('/users', Users())
-    api.add_route('/users/email', Users(), suffix='email')
+    api.add_route('/users/', Users())
+    api.add_route('/users/{name}', Users(), suffix='name')
+    api.add_route('/users/email', Users(), suffix='email') #avec query param (id)
     print("Server started")
     with make_server('', 8080, api) as httpd:
         httpd.serve_forever()

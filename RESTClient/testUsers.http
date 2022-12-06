@@ -1,0 +1,21 @@
+### Simple get
+GET http://localhost:8080/users/
+
+### GET with integrated id
+GET http://localhost:8080/users/mehdi
+
+
+### GET with params
+GET http://localhost:8080/users/email?id=10
+
+
+### POST with json (resend the same object)
+
+POST http://localhost:8080/users/
+Content-Type: application/json
+
+{
+  "username" : "mehdi",
+  "email" : "mehdi@gmail.com",
+  "password" : "azerty123"
+}

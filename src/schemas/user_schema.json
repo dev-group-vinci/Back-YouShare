@@ -1,0 +1,29 @@
+{
+    "title": "User Schema",
+    "description" : "All the data of a user",
+    "type": "object",
+    "properties": {
+        "username": {
+            "title": "Username",
+            "type": "string",
+            "maxLength": 60
+        },
+        "email": {
+            "title": "Email address",
+            "type": "string",
+            "pattern": "^\\S+@\\S+\\.\\S+$",
+            "format": "email",
+            "maxLength": 128
+        },
+        "password": {
+            "title": "Password",
+            "type": "string"
+
+        }
+    },
+    "required": [
+        "username",
+        "email",
+        "password"
+    ]
+}

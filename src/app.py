@@ -1,7 +1,7 @@
 from wsgiref.simple_server import make_server
 import falcon
 
-from ressources.UserRoutes import Users
+from src.ressources.UserRoutes import Users
 
 
 class HelloWorldJson:

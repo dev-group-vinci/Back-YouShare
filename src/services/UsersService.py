@@ -9,7 +9,6 @@ class UserService:
         }
 
     def registerUser(self, email, username, password):
-
         pass
 
     def loginUser(self, email, password):

@@ -1,19 +1,14 @@
-import dotenv
 import falcon
 import jwt
 from dotenv import load_dotenv
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 import os
-from src.services.UsersService import UserService
 
 load_dotenv()
 
-class Authenticate(object):
-    def __init__(self):
-        self.userService = UserService()
-        pass
 
-    def encode(self,idUser,username):
+class Authenticate(object):
+    def encode(self, idUser, username):
         now = datetime.utcnow()
         payload = {
             'id': idUser,
@@ -30,7 +25,7 @@ class Authenticate(object):
 
         return token
 
-    def decode_and_validate_token(self,access_token):
+    def decode_and_validate_token(self, access_token):
         unverified_headers = jwt.get_unverified_header(access_token)
         return jwt.decode(
             access_token,
@@ -38,14 +33,13 @@ class Authenticate(object):
             algorithms=unverified_headers['alg']
         )
 
-
     def __auth_basic(self, username, password):
         if True:
             print("You have access")
         else:
             raise falcon.HTTPUnauthorized('Unauthorized', 'You have no access')
 
-    def __call__(self, req, resp, resource, params,role):
+    def __call__(self, req, resp, resource, params, role):
 
         print("Before trigger - class: Authorize")
         # token = req.get_header('Authorization')
@@ -56,15 +50,9 @@ class Authenticate(object):
         except jwt.exceptions.DecodeError as err:
             raise falcon.HTTPUnauthorized('Unauthorized', 'Token expired')
 
-        print("decoded token : ", decodedToken)
-        user = self.userService.getUser(decodedToken['id'])
-        req.context.user = user
+        req.context.user = decodedToken['id']
 
         if token:
             pass
         else:
             raise falcon.HTTPNotImplemented('Not Implemented', 'Please specify a token')
-
-
-
-

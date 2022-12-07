@@ -5,6 +5,7 @@ from src.resources.UserRoutes import Users
 from src.data.db import Db
 from src.utils.logging import logger
 
+
 class HelloWorldJson:
     def on_get(self, req, resp):
         resp.status = falcon.HTTP_200
@@ -22,16 +23,17 @@ if __name__ == '__main__':
 
     # database connection
     database = Db()
-    database.connect()
+    database = database.connect()
+    print("Type de la conn : ",type(database))
 
-    users = Users(database.conn)
+    users = Users(database)
     api.add_route('/json', HelloWorldJson())
     api.add_route('/text', HelloWorldText())
     api.add_route('/users/', users)
     api.add_route('/users/{name}', users, suffix='name')
     api.add_route('/users/email', users, suffix='email')  # avec query param (id)
-    api.add_route('/users/login',users,suffix='login')
-    #api.add_route('/users/register',users,suffix='register')
+    api.add_route('/users/login', users, suffix='login')
+    # api.add_route('/users/register',users,suffix='register')
 
     logger.info("Server started")
 

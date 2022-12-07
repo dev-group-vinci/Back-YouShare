@@ -9,11 +9,9 @@ from src.services.UsersService import UserService
 
 
 class Users:
-
-    def __init__(self,conn):
+    def __init__(self, conn):
         self.userServices = UserService(conn=conn)
         self.auth = Authenticate()
-        self.conn = conn
 
     def on_get_email(self, req, resp):
         resp.status = falcon.HTTP_200
@@ -57,11 +55,10 @@ class Users:
         })
 
     @jsonschema.validate(load_schema('user_register'))
-    def on_post_register(self,req,resp):
+    def on_post_register(self, req, resp):
         # récupérer le json
         raw_json = req.media
         resp.status = falcon.HTTP_200
 
         # renvoyer le json
         resp.body = dumps(raw_json)
-

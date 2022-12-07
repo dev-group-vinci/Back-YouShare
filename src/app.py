@@ -3,7 +3,7 @@ import falcon
 
 from src.resources.UserRoutes import Users
 from src.data.db import Db
-
+from src.utils.logging import logger
 
 class HelloWorldJson:
     def on_get(self, req, resp):
@@ -29,12 +29,14 @@ if __name__ == '__main__':
     api.add_route('/users/', Users())
     api.add_route('/users/{name}', Users(), suffix='name')
     api.add_route('/users/email', Users(), suffix='email')  # avec query param (id)
-    print("Server started")
+
+    logger.info("Server started")
 
     with make_server('', 8080, api) as httpd:
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
             pass
+        logger.info("Server closed")
         database.close()
         httpd.server_close()

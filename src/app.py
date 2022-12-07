@@ -2,6 +2,7 @@ from wsgiref.simple_server import make_server
 import falcon
 
 from src.resources.UserRoutes import Users
+from src.data.db import Db
 
 
 class HelloWorldJson:
@@ -19,11 +20,21 @@ class HelloWorldText:
 if __name__ == '__main__':
     api = falcon.App(cors_enable=True)
 
+    # database connection
+    database = Db()
+    database.connect()
+
     api.add_route('/json', HelloWorldJson())
     api.add_route('/text', HelloWorldText())
     api.add_route('/users/', Users())
     api.add_route('/users/{name}', Users(), suffix='name')
-    api.add_route('/users/email', Users(), suffix='email') #avec query param (id)
+    api.add_route('/users/email', Users(), suffix='email')  # avec query param (id)
     print("Server started")
+
     with make_server('', 8080, api) as httpd:
-        httpd.serve_forever()
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            pass
+        database.close()
+        httpd.server_close()

@@ -2,7 +2,7 @@ from wsgiref.simple_server import make_server
 import falcon
 
 from src.resources.UserRoutes import Users
-
+from src.data.db import Db
 
 class HelloWorldJson:
     def on_get(self, req, resp):
@@ -18,7 +18,8 @@ class HelloWorldText:
 
 if __name__ == '__main__':
     api = falcon.App(cors_enable=True)
-
+    database = Db()
+    conn = database.connect()
     api.add_route('/json', HelloWorldJson())
     api.add_route('/text', HelloWorldText())
     api.add_route('/users/', Users())

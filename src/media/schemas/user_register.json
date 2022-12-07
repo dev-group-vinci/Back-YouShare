@@ -21,12 +21,6 @@
 
         }
     },
-    "message": {
-        "email" : "Format de l'email non valide",
-        "password" : "password must be a string",
-        "username" : "username must be a string",
-        "type" : "invalid type"
-  },
     "required": [
         "username",
         "email",

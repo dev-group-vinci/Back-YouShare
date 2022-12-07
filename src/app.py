@@ -18,17 +18,20 @@ class HelloWorldText:
 
 
 if __name__ == '__main__':
-    api = falcon.App(cors_enable=True)
+    api = falcon.App(cors_enable=True, middleware=[])
 
     # database connection
     database = Db()
     database.connect()
 
+    users = Users(database.conn)
     api.add_route('/json', HelloWorldJson())
     api.add_route('/text', HelloWorldText())
-    api.add_route('/users/', Users())
-    api.add_route('/users/{name}', Users(), suffix='name')
-    api.add_route('/users/email', Users(), suffix='email')  # avec query param (id)
+    api.add_route('/users/', users)
+    api.add_route('/users/{name}', users, suffix='name')
+    api.add_route('/users/email', users, suffix='email')  # avec query param (id)
+    api.add_route('/users/login',users,suffix='login')
+    #api.add_route('/users/register',users,suffix='register')
 
     logger.info("Server started")
 

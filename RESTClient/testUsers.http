@@ -1,12 +1,10 @@
-### Simple get
-GET http://localhost:8080/users/
-
 ### GET with integrated id
 GET http://localhost:8080/users/mehdi
 
 
 ### GET with params
 GET http://localhost:8080/users/email?id=10
+
 
 
 ### POST with json (resend the same object)
@@ -19,3 +17,21 @@ Content-Type: application/json
   "email" : "mehdi@gmail.com",
   "password" : "azerty123"
 }
+
+### Login
+
+POST http://localhost:8080/users/login
+Content-Type: application/json
+
+{
+  "email" : "mehdi@gmail.com",
+  "password" : "azerty123"
+}
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
+### Simple get
+GET http://localhost:8080/users/
+Authorization: {{token}}

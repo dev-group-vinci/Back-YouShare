@@ -30,5 +30,11 @@ if __name__ == '__main__':
     api.add_route('/users/{name}', Users(), suffix='name')
     api.add_route('/users/email', Users(), suffix='email')  # avec query param (id)
     print("Server started")
+
     with make_server('', 8080, api) as httpd:
-        httpd.serve_forever()
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            pass
+        database.close()
+        httpd.server_close()

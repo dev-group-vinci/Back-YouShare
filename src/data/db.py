@@ -18,10 +18,17 @@ class Db:
                 password=os.getenv("DB_PASS"),
                 port=os.getenv("DB_PORT"),
             )
+
+            self.con.autocommit = False
+
             print("Database connection done")
         except(Exception, psycopg2.DatabaseError) as error:
             print("Database error")
             self.conn.close()
         return self.conn
 
-
+    def close(self):
+        try:
+            self.conn.close()
+        except(Exception, psycopg2.InternalError) as error:
+            print(error)

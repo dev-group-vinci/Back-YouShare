@@ -1,7 +1,7 @@
 import falcon
 from json import dumps
 from falcon.media.validators import jsonschema
-from app.schemas.__init__ import load_schema
+from app.media.schemas import load_schema
 
 
 class Users:

@@ -34,4 +34,5 @@ class Db:
         try:
             self.conn.close()
         except(Exception, psycopg2.InternalError) as error:
+            self.conn = None
             print(error)

@@ -32,6 +32,17 @@ Content-Type: application/json
 client.global.set("token", response.body.token);
 %}
 
+### Register
+
+POST http://localhost:8080/users/register
+Content-Type: application/json
+
+{
+  "username": "mehdi",
+  "email" : "mehdi@gmail.com",
+  "password" : "azerty123"
+}
+
 ### Simple get
 GET http://localhost:8080/users/
 Authorization: {{token}}

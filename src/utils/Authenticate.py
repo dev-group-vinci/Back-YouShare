@@ -8,11 +8,14 @@ load_dotenv()
 
 
 class Authenticate(object):
-    def encode(self, idUser, username):
+
+    def __int__(self,conn):
+        self.conn = conn
+
+    def encode(self, id_user):
         now = datetime.utcnow()
         payload = {
-            'id': idUser,
-            'username': username,
+            'id': id_user,
             'iat': now,
             'exp': (now + timedelta(hours=24)).timestamp()
         }

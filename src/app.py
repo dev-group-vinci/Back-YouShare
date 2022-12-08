@@ -33,7 +33,7 @@ if __name__ == '__main__':
     api.add_route('/users/{name}', users, suffix='name')
     api.add_route('/users/email', users, suffix='email')  # avec query param (id)
     api.add_route('/users/login', users, suffix='login')
-    # api.add_route('/users/register',users,suffix='register')
+    api.add_route('/users/register',users,suffix='register')
 
     logger.info("Server started")
 

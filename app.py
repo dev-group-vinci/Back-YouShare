@@ -41,7 +41,7 @@ if __name__ == '__main__':
 
     logger.info("Server started")
 
-    port = int(os.getenv("port")) or 8080
+    port = int(os.getenv("PORT")) or 8080
     
     with make_server('', port, api) as httpd:
         try:

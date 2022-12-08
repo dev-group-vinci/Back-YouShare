@@ -21,7 +21,7 @@ class Authenticate(object):
 
         token = jwt.encode(
             payload=payload,
-            key=os.getenv("jwt_secret"),
+            key=os.getenv("JWT_SECRET"),
             algorithm="HS256"
         )
 
@@ -31,7 +31,7 @@ class Authenticate(object):
         unverified_headers = jwt.get_unverified_header(access_token)
         return jwt.decode(
             access_token,
-            key=os.getenv("jwt_secret"),
+            key=os.getenv("JWT_SECRET"),
             algorithms=unverified_headers['alg']
         )
 

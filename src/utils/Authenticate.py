@@ -63,6 +63,11 @@ class Authenticate(object):
         db.conn.commit()
         cur.close()
 
+        if data[2] != role:
+            db.conn.commit()
+            cur.close()
+            raise falcon.HTTPUnauthorized('Unauthorized','You don\'t have the right to access this data')
+
         req.context.user = {
             "id":data[0],
             "username":data[1],

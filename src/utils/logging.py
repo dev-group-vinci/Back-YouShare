@@ -2,6 +2,11 @@ import logging.handlers
 from dotenv import load_dotenv
 import os
 
+
+exist = os.path.exists("./logs")
+if not exist:
+    os.makedirs("./logs")
+
 load_dotenv()
 
 logger = logging.getLogger(os.getenv("LOG_NAME"))

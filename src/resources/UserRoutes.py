@@ -60,7 +60,7 @@ class Users:
         resp.media = {'Message': 'Hello World '}
 
 
-    # @jsonschema.validate(load_schema('user_register'))
+    @jsonschema.validate(load_schema('user_register'))
     @falcon.before(auth, "user")
     def on_post(self, req, resp):
 
@@ -93,7 +93,7 @@ class Users:
         # renvoyer le json
         resp.body = dumps(raw_json)
 
-    # @jsonschema.validate(load_schema('user_login'))
+    @jsonschema.validate(load_schema('user_login'))
     def on_post_login(self, req, resp):
         raw_json = req.media
         id = self.userServices.login(raw_json['email'],raw_json['password'])
@@ -103,7 +103,7 @@ class Users:
             'token': token
         })
 
-    # @jsonschema.validate(load_schema('user_register'))
+    @jsonschema.validate(load_schema('user_register'))
     def on_post_register(self, req, resp):
         # récupérer le json
         raw_json = req.media

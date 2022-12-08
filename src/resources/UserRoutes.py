@@ -47,7 +47,7 @@ class Users:
         resp.status = falcon.HTTP_200
         resp.media = {'Message': 'Hello World '}
 
-    @jsonschema.validate(load_schema('user_schema'))
+    # @jsonschema.validate(load_schema('user_schema'))
     def on_post(self, req, resp):
         # récupérer le json
         raw_json = req.media

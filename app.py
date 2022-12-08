@@ -1,3 +1,4 @@
+import os
 from wsgiref.simple_server import make_server
 import falcon
 
@@ -34,7 +35,7 @@ if __name__ == '__main__':
 
     logger.info("Server started")
 
-    with make_server('', 8080, api) as httpd:
+    with make_server('', os.getenv("PORT") or 8080, api) as httpd:
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:

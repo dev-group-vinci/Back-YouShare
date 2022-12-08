@@ -32,10 +32,11 @@ if __name__ == '__main__':
     api.add_route('/users/email', Users(), suffix='email')  # avec query param (id)
     api.add_route('/users/picture/{picture_name}', Users(), suffix='picture')
 
-
     logger.info("Server started")
 
-    with make_server('', 8080, api) as httpd:
+    port = int(os.getenv("PORT")) or 8080
+
+    with make_server('', port, api) as httpd:
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:

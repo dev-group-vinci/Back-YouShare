@@ -1,1 +1,1 @@
-web: python.exe app.py
+web : python app.py

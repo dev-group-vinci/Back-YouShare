@@ -1,16 +1,25 @@
 import threading
 from src.utils.logging import logger
 import psycopg2
-from dotenv import load_dotenv
 import os
 
 
 class Db:
-    load_dotenv()
+
+    __instance = None
+
+    @staticmethod
+    def getInstance():
+        if Db.__instance is None:
+            Db()
+        return Db.__instance
 
     def __init__(self):
-        self.conn = None
-        self.connection = threading.local()
+        if Db.__instance is not None:
+            raise Exception("Db instance already exist !!")
+        else:
+            Db.__instance = self
+            self.conn = None
 
     def connect(self):
         try:

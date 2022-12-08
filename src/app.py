@@ -29,6 +29,8 @@ if __name__ == '__main__':
     api.add_route('/users/', Users())
     api.add_route('/users/{name}', Users(), suffix='name')
     api.add_route('/users/email', Users(), suffix='email')  # avec query param (id)
+    api.add_route('/users/picture/{picture_name}', Users(), suffix='picture')
+
 
     logger.info("Server started")
 

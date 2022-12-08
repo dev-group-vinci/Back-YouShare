@@ -1,11 +1,12 @@
 import bcrypt
 import falcon
+from src.data.db import Db
 
 
 class UserService:
-    def __init__(self, conn):
-        self.conn = conn
-        print("test : ", type(conn))
+    def __init__(self):
+        db = Db.getInstance()
+        self.conn = db.conn
 
     def getUser(self, idUser):
         return {

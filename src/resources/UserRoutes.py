@@ -10,8 +10,8 @@ from src.services.UsersService import UserService
 auth = Authenticate()
 
 class Users:
-    def __init__(self, conn):
-        self.userServices = UserService(conn=conn)
+    def __init__(self):
+        self.userServices = UserService()
 
 
     def on_get_email(self, req, resp):

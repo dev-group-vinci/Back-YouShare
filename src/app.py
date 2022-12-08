@@ -4,6 +4,7 @@ import falcon
 from src.resources.UserRoutes import Users
 from src.data.db import Db
 from src.utils.logging import logger
+import os
 
 
 class HelloWorldJson:
@@ -23,10 +24,9 @@ if __name__ == '__main__':
 
     # database connection
     database = Db()
-    database = database.connect()
-    print("Type de la conn : ",type(database))
+    database.connect()
 
-    users = Users(database)
+    users = Users()
     api.add_route('/json', HelloWorldJson())
     api.add_route('/text', HelloWorldText())
     api.add_route('/users/', users)
@@ -37,7 +37,7 @@ if __name__ == '__main__':
 
     logger.info("Server started")
 
-    with make_server('', 8080, api) as httpd:
+    with make_server('', int(os.getenv("srv_port")) , api) as httpd:
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:

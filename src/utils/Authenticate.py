@@ -3,11 +3,13 @@ import jwt
 from datetime import datetime, timedelta
 import os
 
+from src.data.db import Db
+
 
 class Authenticate(object):
 
-    def __int__(self,conn):
-        self.conn = conn
+    def __int__(self):
+        pass
 
     def encode(self, id_user):
         now = datetime.utcnow()
@@ -42,15 +44,31 @@ class Authenticate(object):
     def __call__(self, req, resp, resource, params, role):
 
         print("Before trigger - class: Authorize")
-        # token = req.get_header('Authorization')
-        token = self.encode(1, "mehdi");
+
+        token = req.get_header('Authorization')
+
+        # IL FAUT QUE JE METTE LE SERVICE EN SINGLETON POUR AUTH ou que j'utilise la db pour recup l'user
 
         try:
             decodedToken = self.decode_and_validate_token(token)
         except jwt.exceptions.DecodeError as err:
             raise falcon.HTTPUnauthorized('Unauthorized', 'Token expired')
 
-        req.context.user = decodedToken['id']
+        db = Db.getInstance()
+        cur = db.conn.cursor()
+
+        cur.execute("SELECT * FROM youshare.users WHERE id_user=%s", [decodedToken['id']])
+        data = cur.fetchone()
+
+        db.conn.commit()
+        cur.close()
+
+        req.context.user = {
+            "id":data[0],
+            "username":data[1],
+            "role":data[2],
+            "email":data[3]
+        }
 
         if token:
             pass

@@ -5,6 +5,7 @@ from src.resources.UserRoutes import Users
 from src.data.db import Db
 from src.utils.logging import logger
 import os
+from src.utils.Authenticate import Authenticate
 
 
 class HelloWorldJson:
@@ -37,7 +38,8 @@ if __name__ == '__main__':
 
     logger.info("Server started")
 
-    with make_server('', int(os.getenv("srv_port")) , api) as httpd:
+    port = int(os.getenv("port")) or 8080
+    with make_server('', port, api) as httpd:
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:

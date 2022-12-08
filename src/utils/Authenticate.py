@@ -1,10 +1,7 @@
 import falcon
 import jwt
-from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import os
-
-load_dotenv()
 
 
 class Authenticate(object):

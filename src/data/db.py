@@ -1,13 +1,25 @@
+import threading
+from src.utils.logging import logger
 import psycopg2
-from dotenv import load_dotenv
 import os
 
 
 class Db:
-    load_dotenv()
+
+    __instance = None
+
+    @staticmethod
+    def getInstance():
+        if Db.__instance is None:
+            Db()
+        return Db.__instance
 
     def __init__(self):
-        self.conn = None
+        if Db.__instance is not None:
+            raise Exception("Db instance already exist !!")
+        else:
+            Db.__instance = self
+            self.conn = None
 
     def connect(self):
         try:
@@ -19,11 +31,11 @@ class Db:
                 port=os.getenv("DB_PORT"),
             )
 
-            self.con.autocommit = False
+            self.conn.autocommit = False
 
-            print("Database connection done")
+            logger.info("Database connection done")
         except(Exception, psycopg2.DatabaseError) as error:
-            print("Database error")
+            logger.warning(error)
             self.conn.close()
         return self.conn
 
@@ -31,4 +43,5 @@ class Db:
         try:
             self.conn.close()
         except(Exception, psycopg2.InternalError) as error:
-            print(error)
+            self.conn = None
+            logger.warning(error)

@@ -5,9 +5,11 @@ CREATE SCHEMA youshare;
 create table youshare.users
 (
     id_user  serial                primary key,
-    pseudo   varchar(60)          not null,
-    email    varchar(128)          not null,
-    password char(60)              not null
+    username varchar(60)          not null,
+    role     varchar(10)            not null default 'user' CHECK (role = 'admin' or role = 'user'),
+    email    varchar(128)          not null unique ,
+    password char(60)              not null,
+    biography varchar(200)         null
 
 );
 

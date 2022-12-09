@@ -22,7 +22,7 @@ create table youshare.posts
     date_published    TIMESTAMP not null default CURRENT_TIMESTAMP,
     date_deleted      TIMESTAMP ,
     text varchar(280) not null,
-    FOREIGN KEY (id_user) REFERENCES youshare.users (id_user),
+    FOREIGN KEY (id_user) REFERENCES youshare.users (id_user)
 );
 
 create table youshare.shares

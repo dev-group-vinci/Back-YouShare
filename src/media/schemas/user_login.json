@@ -3,12 +3,11 @@
     "description" : "All the data of a user",
     "type": "object",
     "properties": {
-        "email": {
-            "title": "Email address",
+        "username": {
+            "title": "Username",
             "type": "string",
-            "pattern": "^\\S+@\\S+\\.\\S+$",
-            "format": "email",
-            "maxLength": 128
+            "minLength": 4,
+            "maxLength": 60
         },
         "password": {
             "title": "Password",
@@ -16,7 +15,7 @@
         }
     },
     "required": [
-        "email",
+        "username",
         "password"
     ]
 }

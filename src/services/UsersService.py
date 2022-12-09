@@ -34,7 +34,14 @@ class UserService:
         if data is not None:
             self.conn.commit()
             cur.close()
-            raise falcon.HTTPConflict('Conflict', 'The user is already registered')
+            raise falcon.HTTPConflict('Conflict', 'The email address is already used')
+
+        cur.execute("SELECT * FROM youshare.users WHERE username=%s", [username])
+        data = cur.fetchone()
+        if data is not None:
+            self.conn.commit()
+            cur.close()
+            raise falcon.HTTPConflict('Conflict', 'The username is already used')
 
         password = str(password).encode('utf-8');
         hashedPassword = bcrypt.hashpw(password, bcrypt.gensalt(10))
@@ -48,10 +55,10 @@ class UserService:
         cur.close()
         return row[0]
 
-    def login(self, email, password):
+    def login(self, username, password):
         cur = self.conn.cursor()
 
-        cur.execute("SELECT id_user,username,role,password FROM youshare.users WHERE email = %s", [email])
+        cur.execute("SELECT id_user,username,role,password FROM youshare.users WHERE username = %s", [username])
         user = cur.fetchone()
         if user is None:
             self.conn.commit()

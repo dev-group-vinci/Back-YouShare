@@ -17,7 +17,7 @@ auth = Authenticate()
 
 class Users:
     def __init__(self):
-        self.userServices = UserService()
+        self.userServices = UserService.getInstance()
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_get_email(self, req, resp):

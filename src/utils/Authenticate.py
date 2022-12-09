@@ -2,8 +2,10 @@ import falcon
 import jwt
 from datetime import datetime, timedelta
 import os
+from src.utils import enum
 
 from src.data.db import Db
+from src.utils.logging import logger
 
 
 class Authenticate(object):
@@ -28,30 +30,26 @@ class Authenticate(object):
         return token
 
     def decode_and_validate_token(self, access_token):
-        unverified_headers = jwt.get_unverified_header(access_token)
         return jwt.decode(
             access_token,
             key=os.getenv("JWT_SECRET"),
-            algorithms=unverified_headers['alg']
+            algorithms=["HS256"]
         )
-
-    def __auth_basic(self, username, password):
-        if True:
-            print("You have access")
-        else:
-            raise falcon.HTTPUnauthorized('Unauthorized', 'You have no access')
 
     def __call__(self, req, resp, resource, params, role):
 
-        print("Before trigger - class: Authorize")
-
+        logger.info("Authorize for "+role)
         token = req.get_header('Authorization')
 
-        # IL FAUT QUE JE METTE LE SERVICE EN SINGLETON POUR AUTH ou que j'utilise la db pour recup l'user
+        if not token:
+            logger.warning("No token specified")
+            raise falcon.HTTPNotImplemented('Not Implemented', 'Please specify a token')
+
 
         try:
             decodedToken = self.decode_and_validate_token(token)
         except jwt.exceptions.DecodeError as err:
+            logger.warning("Token expired "+err)
             raise falcon.HTTPUnauthorized('Unauthorized', 'Token expired')
 
         db = Db.getInstance()
@@ -63,9 +61,10 @@ class Authenticate(object):
         db.conn.commit()
         cur.close()
 
-        if data[2] != role:
+        if data[2] != role and data[2] == enum.ROLE_USER:
             db.conn.commit()
             cur.close()
+            logger.warning("Unauthorized access")
             raise falcon.HTTPUnauthorized('Unauthorized','You don\'t have the right to access this data')
 
         req.context.user = {
@@ -75,7 +74,4 @@ class Authenticate(object):
             "email":data[3]
         }
 
-        if token:
-            pass
-        else:
-            raise falcon.HTTPNotImplemented('Not Implemented', 'Please specify a token')
+

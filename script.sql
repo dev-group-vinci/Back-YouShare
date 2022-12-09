@@ -13,7 +13,7 @@ create table youshare.users
 
 );
 
-create table youshare.videos
+create table youshare.posts
 (
     id_video serial                primary key,
     url_id   char(11)              not null,
@@ -26,7 +26,7 @@ create table youshare.shares
     id_user integer not null,
     id_video integer not null,
     FOREIGN KEY (id_user) REFERENCES youshare.users (id_user),
-    FOREIGN KEY (id_video) REFERENCES youshare.videos (id_video),
+    FOREIGN KEY (id_video) REFERENCES youshare.posts (id_video),
     PRIMARY KEY (id_user,id_video)
 );
 
@@ -35,7 +35,7 @@ create table youshare.likes
     id_user integer not null,
     id_video integer not null,
     FOREIGN KEY (id_user) REFERENCES youshare.users (id_user),
-    FOREIGN KEY (id_video) REFERENCES youshare.videos (id_video),
+    FOREIGN KEY (id_video) REFERENCES youshare.posts (id_video),
     PRIMARY KEY (id_user,id_video)
 );
 
@@ -47,7 +47,7 @@ create table youshare.comments
     id_comment_parent integer,
     text varchar(280) not null,
     FOREIGN KEY (id_user) REFERENCES youshare.users (id_user),
-    FOREIGN KEY (id_video) REFERENCES youshare.videos (id_video),
+    FOREIGN KEY (id_video) REFERENCES youshare.posts (id_video),
     FOREIGN KEY (id_comment_parent) REFERENCES youshare.comments (id_comment)
 );
 

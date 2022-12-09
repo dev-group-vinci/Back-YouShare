@@ -1,10 +1,29 @@
 # BACK-PFE
 
-python -m pip install --upgrade pip
-pip3 install ipython
-pip3 install falcon
-pip3 install jsonschema 
-pip install azure-storage-blob
-pip3 install python-dotenv
-pip3 install psycopg2
-pip3 install PyJWT
+Create env file
+
+```
+DB_HOST=<DB_HOST>
+DB_USER=<DB_USER>
+DB_PASS=<DB_PASSWORD>
+DB_NAME=<DB_NAME>
+DB_PORT=5432
+LOG_NAME=<LoggerName>
+JWT_SECRET=<JWT_SECRET>
+PATH_LOGS=<DIR_LOG/LOG.TXT>
+PORT=<SERVER_PORT>
+
+STORAGE_ACCOUNT_KEY=<STORAGE_ACCOUNT_KEY>
+STORAGE_ACCOUNT_NAME=<STORAGE_ACCOUNT_NAME>
+CONNECTION_STRING=<CONNECTION_STRING>
+CONTAINER_NAME=<CONTAINER_NAME>
+```
+
+Install the requirements
+```python
+pip3 install -r "requirements.txt"
+```
+Launch the server with app.py
+```python
+python app.py
+```

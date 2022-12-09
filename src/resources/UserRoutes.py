@@ -11,6 +11,7 @@ from falcon.media.validators import jsonschema
 from src.media import load_schema
 from src.utils.Authenticate import Authenticate
 from src.services.UsersService import UserService
+from src.utils import enum
 
 auth = Authenticate()
 
@@ -18,7 +19,7 @@ class Users:
     def __init__(self):
         self.userServices = UserService()
 
-
+    @falcon.before(auth, enum.ROLE_USER)
     def on_get_email(self, req, resp):
         resp.status = falcon.HTTP_200
         if req.params:
@@ -26,6 +27,7 @@ class Users:
         else:
             resp.media = {'Message': 'Hello my friend'}
 
+    @falcon.before(auth, enum.ROLE_USER)
     def on_get_name(self, req, resp, name):
         resp.status = falcon.HTTP_200
         resp.media = {'Message': 'Hello World ' + name}
@@ -53,7 +55,7 @@ class Users:
         resp.status = falcon.HTTP_200
         resp.body = dumps({'url': url})
 
-    @falcon.before(auth, "admin")
+    @falcon.before(auth, enum.ROLE_ADMIN)
     def on_get(self, req, resp):
         print(req.context.user)
         resp.status = falcon.HTTP_200
@@ -61,7 +63,7 @@ class Users:
 
 
     @jsonschema.validate(load_schema('user_register'))
-    @falcon.before(auth, "user")
+    @falcon.before(auth, enum.ROLE_USER)
     def on_post(self, req, resp):
 
         # récupérer le json

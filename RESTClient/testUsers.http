@@ -1,10 +1,10 @@
-### GET with integrated id
+### GET with integrated name
 GET http://localhost:8989/users/mehdi
-
+Authorization: {{token}}
 
 ### GET with params
 GET http://localhost:8989/users/email?id=10
-
+Authorization: {{token}}
 
 
 ### POST with json (resend the same object)

@@ -28,7 +28,7 @@ class Posts:
 
         resp.status = falcon.HTTP_201
         resp.body = dumps({
-            'id_video': newPost[0],
+            'id_post': newPost[0],
             'id_url': newPost[1],
             'state': newPost[2],
             'date_published': newPost[3],
@@ -44,7 +44,7 @@ class Posts:
 
         resp.status = falcon.HTTP_200
         resp.body = dumps({
-            'id_video': post[0],
+            'id_post': post[0],
             'id_url': post[1],
             'state': post[2],
             'text': post[3],

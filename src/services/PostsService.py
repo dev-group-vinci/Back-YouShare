@@ -33,3 +33,19 @@ class PostService:
         self.conn.commit()
         cur.close()
         return row
+
+    def readOne(self, id_post):
+        cur = self.conn.cursor()
+
+        cur.execute("SELECT id_video,id_url,state,text,date_published,date_deleted"
+                    " FROM youshare.posts WHERE id_video = %s", [id_post])
+
+        post = cur.fetchone()
+
+        self.conn.commit()
+        cur.close()
+
+        if post is None:
+            raise falcon.HTTPNotFound('Not Found', 'The post is not registered yet')
+
+        return post

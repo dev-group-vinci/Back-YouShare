@@ -1,11 +1,10 @@
 {
-    "title": "Wew post Schema",
+    "title": "New post Schema",
     "description" : "Information of the new post",
     "type": "object",
     "properties": {
         "id_url": {
             "title": "Id of the url video",
-            "type": "string",
             "type": "string"
         },
         "text": {
@@ -14,6 +13,7 @@
         }
     },
     "required": [
+        "id_url",
         "text"
     ]
 }

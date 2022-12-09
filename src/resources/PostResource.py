@@ -24,12 +24,7 @@ class Posts:
 
         id_user = req.context.user['id']
 
-        id_url = None
-        if 'id_url' not in raw_json:
-            raw_json['id_url'] = None
-        id_url = raw_json['id_url']
-
-        newPost = self.postServices.createPost(id_user, id_url, raw_json['text'])
+        newPost = self.postServices.createPost(id_user, raw_json['id_url'], raw_json['text'])
 
         resp.status = falcon.HTTP_201
         resp.body = dumps({

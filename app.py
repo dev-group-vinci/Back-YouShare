@@ -42,7 +42,9 @@ if __name__ == '__main__':
     api.add_route('/users/login', users, suffix='login')
     api.add_route('/users/register',users,suffix='register')
     api.add_route('/users/picture/{picture_name}', Users(), suffix='picture')
+
     api.add_route('/posts', posts)
+    api.add_route('/posts/{id_post}', posts, suffix='post')
 
 
     logger.info("Server started")

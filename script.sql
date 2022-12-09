@@ -54,7 +54,7 @@ create table youshare.comments
     date_published    TIMESTAMP not null default CURRENT_TIMESTAMP,
     date_deleted      TIMESTAMP ,
     FOREIGN KEY (id_user) REFERENCES youshare.users (id_user),
-    FOREIGN KEY (id_post) REFERENCES youshare.posts (id_video),
+    FOREIGN KEY (id_post) REFERENCES youshare.posts (id_post),
     FOREIGN KEY (id_comment_parent) REFERENCES youshare.comments (id_comment)
 );
 

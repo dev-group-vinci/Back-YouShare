@@ -1,0 +1,19 @@
+{
+    "title": "Wew post Schema",
+    "description" : "Information of the new post",
+    "type": "object",
+    "properties": {
+        "id_url": {
+            "title": "Id of the url video",
+            "type": "string",
+            "type": "string"
+        },
+        "text": {
+            "title": "Text of the post",
+            "type": "string"
+        }
+    },
+    "required": [
+        "text"
+    ]
+}

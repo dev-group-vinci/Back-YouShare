@@ -24,8 +24,8 @@ POST http://localhost:8989/users/login
 Content-Type: application/json
 
 {
-  "username" : "mehdi",
-  "password" : "azerty123"
+  "username" : "rayan",
+  "password" : "M0td@"
 }
 
 > {%
@@ -38,9 +38,9 @@ POST http://localhost:8989/users/register
 Content-Type: application/json
 
 {
-  "username": "mehdi",
-  "email" : "mehdi@gmail.com",
-  "password" : "azerty123"
+  "username": "rayan",
+  "email" : "rayan@gmail.com",
+  "password" : "M0tde@"
 }
 
 ### Simple get

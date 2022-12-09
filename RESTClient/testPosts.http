@@ -26,3 +26,10 @@ Authorization: {{token}}
 ### Get a post
 GET http://localhost:8989/posts/3
 Authorization: {{token}}
+
+
+### Like a post
+
+POST http://localhost:8989/posts/4/likes
+Content-Type: application/json
+Authorization: {{token}}

@@ -7,7 +7,7 @@
             "title": "Username",
             "type": "string",
             "minLength": 4,
-            "maxLength": 128
+            "maxLength": 60
         },
         "password": {
             "title": "Password",

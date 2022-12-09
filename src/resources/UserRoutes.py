@@ -98,7 +98,7 @@ class Users:
     @jsonschema.validate(load_schema('user_login'))
     def on_post_login(self, req, resp):
         raw_json = req.media
-        id = self.userServices.login(raw_json['email'],raw_json['password'])
+        id = self.userServices.login(raw_json['username'],raw_json['password'])
         token = auth.encode(id_user=int(id))
         resp.status = falcon.HTTP_200
         resp.body = dumps({

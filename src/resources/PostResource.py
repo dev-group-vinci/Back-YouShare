@@ -34,3 +34,21 @@ class Posts:
             'date_published': newPost[3],
             'text': newPost[4],
         }, default=str)
+
+
+    @falcon.before(auth, enum.ROLE_USER)
+    def on_get_post(self, req, resp, id_post):
+
+        post = self.postServices.readOne(id_post)
+
+
+        resp.status = falcon.HTTP_200
+        resp.body = dumps({
+            'id_video': post[0],
+            'id_url': post[1],
+            'state': post[2],
+            'text': post[3],
+            'date_published': post[4],
+            'date_deleted': post[5],
+
+        }, default=str)

@@ -38,18 +38,17 @@ class Authenticate(object):
 
     def __call__(self, req, resp, resource, params, role):
 
-        logger.info("Authorize for "+role)
+        logger.info("Authorize for " + role)
         token = req.get_header('Authorization')
 
         if not token:
             logger.warning("No token specified")
             raise falcon.HTTPNotImplemented('Not Implemented', 'Please specify a token')
 
-
         try:
             decodedToken = self.decode_and_validate_token(token)
         except jwt.exceptions.DecodeError as err:
-            logger.warning("Token expired "+err)
+            logger.warning("Token expired " + err)
             raise falcon.HTTPUnauthorized('Unauthorized', 'Token expired')
 
         db = Db.getInstance()
@@ -65,13 +64,11 @@ class Authenticate(object):
             db.conn.commit()
             cur.close()
             logger.warning("Unauthorized access")
-            raise falcon.HTTPUnauthorized('Unauthorized','You don\'t have the right to access this data')
+            raise falcon.HTTPUnauthorized('Unauthorized', 'You don\'t have the right to access this data')
 
         req.context.user = {
-            "id":data[0],
-            "username":data[1],
-            "role":data[2],
-            "email":data[3]
+            "id": data[0],
+            "username": data[1],
+            "role": data[2],
+            "email": data[3]
         }
-
-

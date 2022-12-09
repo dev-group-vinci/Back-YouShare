@@ -15,7 +15,7 @@ create table youshare.users
 
 create table youshare.posts
 (
-    id_video serial                primary key,
+    id_post serial                primary key,
     id_user  integer               not null,
     id_url   char(11)              not null,
     state    varchar(9)            not null default 'published' CHECK (state = 'published' or state='deleted'),
@@ -28,33 +28,33 @@ create table youshare.posts
 create table youshare.shares
 (
     id_user integer not null,
-    id_video integer not null,
+    id_post integer not null,
     FOREIGN KEY (id_user) REFERENCES youshare.users (id_user),
-    FOREIGN KEY (id_video) REFERENCES youshare.posts (id_video),
-    PRIMARY KEY (id_user,id_video)
+    FOREIGN KEY (id_post) REFERENCES youshare.posts (id_post),
+    PRIMARY KEY (id_user,id_post)
 );
 
 create table youshare.likes
 (
     id_user integer not null,
-    id_video integer not null,
+    id_post integer not null,
     FOREIGN KEY (id_user) REFERENCES youshare.users (id_user),
-    FOREIGN KEY (id_video) REFERENCES youshare.posts (id_video),
-    PRIMARY KEY (id_user,id_video)
+    FOREIGN KEY (id_post) REFERENCES youshare.posts (id_post),
+    PRIMARY KEY (id_user,id_post)
 );
 
 create table youshare.comments
 (
     id_comment serial primary key,
     id_user integer not null,
-    id_video integer not null,
+    id_post integer not null,
     id_comment_parent integer,
     text varchar(280) not null,
     state    varchar(9) not null default 'published' CHECK (state = 'published' or state='deleted'),
     date_published    TIMESTAMP not null default CURRENT_TIMESTAMP,
     date_deleted      TIMESTAMP ,
     FOREIGN KEY (id_user) REFERENCES youshare.users (id_user),
-    FOREIGN KEY (id_video) REFERENCES youshare.posts (id_video),
+    FOREIGN KEY (id_post) REFERENCES youshare.posts (id_video),
     FOREIGN KEY (id_comment_parent) REFERENCES youshare.comments (id_comment)
 );
 

@@ -81,7 +81,6 @@ class PostService:
 
         return num_likes
 
-
     def isLiked(self, id_post, id_user):
         cur = None
         try:

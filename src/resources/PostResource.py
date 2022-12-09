@@ -35,12 +35,9 @@ class Posts:
             'text': newPost[4],
         }, default=str)
 
-
     @falcon.before(auth, enum.ROLE_USER)
     def on_get_post(self, req, resp, id_post):
-
         post = self.postServices.readOne(id_post)
-
 
         resp.status = falcon.HTTP_200
         resp.body = dumps({
@@ -52,3 +49,11 @@ class Posts:
             'date_deleted': post[5],
 
         }, default=str)
+
+    @falcon.before(auth, enum.ROLE_USER)
+    def on_post_like(self, req, resp, id_post):
+        id_user = req.context.user['id']
+        nb_like = self.postServices.like(id_post, id_user)
+
+        resp.status = falcon.HTTP_201
+        resp.body = dumps(nb_like, default=int)

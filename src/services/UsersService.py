@@ -11,14 +11,14 @@ class UserService:
         if UserService.__instance is None:
             UserService()
         return UserService.__instance
+
     def __init__(self):
         if UserService.__instance is not None:
             raise Exception("UserService instance already exist !!")
         else:
             UserService.__instance = self
-        db = Db.getInstance()
-        self.conn = db.conn
-
+            db = Db.getInstance()
+            self.conn = db.conn
 
     def getUser(self, idUser):
         return {

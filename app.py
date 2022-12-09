@@ -1,11 +1,10 @@
 from wsgiref.simple_server import make_server
 import falcon
-
+from src.middleware import logging
 from src.resources.PostResource import Posts
 from src.resources.UserRoutes import Users
 from src.data.db import Db
 from src.utils.logging import logger
-
 import os
 
 
@@ -22,7 +21,9 @@ class HelloWorldText:
 
 
 if __name__ == '__main__':
-    api = falcon.App(cors_enable=True)
+    api = falcon.App(cors_enable=True, middleware=[
+        logging.LoggingMiddleware()
+    ])
 
     # database connection
     database = Db()

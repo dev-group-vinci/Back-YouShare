@@ -16,11 +16,13 @@ create table youshare.users
 create table youshare.posts
 (
     id_video serial                primary key,
+    id_user  integer               not null,
     id_url   char(11)              not null,
     state    varchar(9)            not null default 'published' CHECK (state = 'published' or state='deleted'),
     date_published    TIMESTAMP not null default CURRENT_TIMESTAMP,
     date_deleted      TIMESTAMP ,
-    text varchar(280) not null
+    text varchar(280) not null,
+    FOREIGN KEY (id_user) REFERENCES youshare.users (id_user),
 );
 
 create table youshare.shares

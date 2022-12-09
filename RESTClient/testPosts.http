@@ -1,0 +1,35 @@
+### Login
+
+POST http://localhost:8989/users/login
+Content-Type: application/json
+
+{
+  "username" : "mehdi",
+  "password" : "azerty123"
+}
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
+### Create a post
+
+POST http://localhost:8989/posts
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "id_url": "TaAM5MovXp0",
+  "text" : "Aujourd'hui je mange des pommes avec Jamy"
+}
+
+### Get a post
+GET http://localhost:8989/posts/3
+Authorization: {{token}}
+
+
+### Like a post
+
+POST http://localhost:8989/posts/4/likes
+Content-Type: application/json
+Authorization: {{token}}

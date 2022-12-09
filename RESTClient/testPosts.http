@@ -4,7 +4,7 @@ POST http://localhost:8989/users/login
 Content-Type: application/json
 
 {
-  "email" : "mehdi@gmail.com",
+  "username" : "mehdi",
   "password" : "azerty123"
 }
 
@@ -22,3 +22,7 @@ Authorization: {{token}}
   "id_url": "TaAM5MovXp0",
   "text" : "Aujourd'hui je mange des pommes avec Jamy"
 }
+
+### Get a post
+GET http://localhost:8989/posts/3
+Authorization: {{token}}

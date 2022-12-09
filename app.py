@@ -2,6 +2,8 @@
 from wsgiref.simple_server import make_server
 import falcon
 
+
+from src.resources.PostResource import Posts
 from src.resources.UserRoutes import Users
 from src.data.db import Db
 from src.utils.logging import logger
@@ -30,6 +32,8 @@ if __name__ == '__main__':
 
 
     users = Users()
+    posts = Posts()
+
     api.add_route('/json', HelloWorldJson())
     api.add_route('/text', HelloWorldText())
     api.add_route('/users/', users)
@@ -38,6 +42,8 @@ if __name__ == '__main__':
     api.add_route('/users/login', users, suffix='login')
     api.add_route('/users/register',users,suffix='register')
     api.add_route('/users/picture/{picture_name}', Users(), suffix='picture')
+    api.add_route('/posts', posts)
+
 
     logger.info("Server started")
 

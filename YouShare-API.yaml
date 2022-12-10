@@ -15,6 +15,8 @@ info:
 tags:
   - name: users
     description: All users routes
+  - name: friends
+    description: All friends routes
   - name: posts
     description: All posts routes
 
@@ -36,12 +38,6 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/user'
-              example:
-                id_user: 1
-                username: Mehdi
-                role: user
-                email: mehdi@gmail.com
-                biography: I love sharing video
 
     put:
       tags:
@@ -136,12 +132,6 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/user'
-              example:
-                id_user: 1
-                username: Mehdi
-                role: user
-                email: mehdi@gmail.com
-                biography: I love sharing video
 
 
   /users/register:
@@ -194,8 +184,141 @@ paths:
               example:
                 token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjcwNjE1MTY2LCJleHAiOjE2NzA2OTc5NjYuNDk1NzQ5fQ.YVC3Q70i05cjXvkf60wkvN7HAEQJCJQymGN4jfBrmSc
 
+  /friends:
+    get:
+      summary: Get all friends
+      tags:
+        - friends
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        200:
+          description: Sent all friends data
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
 
+  /friends/requests:
+    get:
+      summary: Get all friends requests
+      tags:
+        - friends
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        200:
+          description: Sent all friends requests
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
 
+  /friends/self/requests:
+    get:
+      summary: Get all my friends requests
+      tags:
+        - friends
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        200:
+          description: Sent all my friends requests
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+
+  /friends/{id_friend}:
+    parameters:
+      - name: id_friend
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 6
+    post:
+      tags:
+        - friends
+      summary: Send friend request
+      security:
+        - jwtAuth : []
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: User not found
+        201:
+          description: Friend request sent
+    delete:
+      tags:
+        - friends
+      summary: remove friend or friend request
+      security:
+        - jwtAuth : []
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Friend or friend request not found
+        202:
+          description: Successfully deleted
+
+  /friends/{id_friend}/accept:
+    parameters:
+      - name: id_friend
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 10
+    post:
+      tags:
+        - friends
+      summary: Accept friend request
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: User not found
+        200:
+          description: Friend request accepted
+
+  /friends/{id_friend}/refuse:
+    parameters:
+      - name: id_friend
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 9
+    post:
+      tags:
+        - friends
+      summary: Refuse friend request
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: User not found
+        200:
+          description: Friend request refused
 
   /posts:
     get:
@@ -278,7 +401,7 @@ paths:
     get:
       tags:
         - posts
-      summary: retrieve the news feed
+      summary: get number of likes
       security:
         - jwtAuth: [ ]
       responses:
@@ -325,6 +448,67 @@ paths:
           content:
             'text/plain':
               example: 9
+  /posts/{id_post}/shares/:
+    parameters:
+      - name: id_post
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: Id of the post
+    get:
+      tags:
+        - posts
+      summary: Retrieve share number of a post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post not found
+        200:
+          description: Sent posts shares
+          content:
+            'text/plain':
+              example: 10
+    post:
+      tags:
+        - posts
+      summary: Share a post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post not found
+        409:
+          description: Already shared
+        201:
+          description: Sent posts shares
+          content:
+            'text/plain':
+              example: 11
+    delete:
+      tags:
+        - posts
+      summary: Unshare a post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post or share not found
+        202:
+          description: Sent posts shares
+          content:
+            'text/plain':
+              example: 9
+
+
   /posts/{id_post}/comments/:
     parameters:
       - name: id_post
@@ -580,12 +764,9 @@ components:
           type: string
         biography:
           type: string
-        password:
-          type: string
       example:
         id_user: 1
         username: Mehdi
         role: user
         email: mehdi@gmail.com
         biography: I love sharing video
-        password: azerty1234

@@ -11,19 +11,32 @@ class UserService:
         if UserService.__instance is None:
             UserService()
         return UserService.__instance
+
     def __init__(self):
         if UserService.__instance is not None:
             raise Exception("UserService instance already exist !!")
         else:
             UserService.__instance = self
-        db = Db.getInstance()
-        self.conn = db.conn
-
+            db = Db.getInstance()
+            self.conn = db.conn
 
     def getUser(self, idUser):
+        cur = self.conn.cursor()
+        cur.execute("SELECT id_user, username, role, email, biography FROM youshare.users WHERE id_user=%s", [idUser])
+        user = cur.fetchone()
+        if user is None:
+            self.conn.commit
+            cur.close()
+            raise falcon.HTTPNotFound('Not Found', 'The user is not found')
+        self.conn.commit()
+        cur.close()
+
         return {
-            "id": idUser,
-            "username": "mehdi"
+            "id": user[0],
+            "username": user[1],
+            "role": user[2],
+            "email": user[3],
+            "biography": user[4]
         }
 
     def registerUser(self, email, username, password: str):

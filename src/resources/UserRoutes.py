@@ -19,18 +19,31 @@ class Users:
     def __init__(self):
         self.userServices = UserService.getInstance()
 
-    @falcon.before(auth, enum.ROLE_USER)
-    def on_get_email(self, req, resp):
+    @falcon.before(auth,enum.ROLE_USER)
+    def on_get(self,req,resp):
         resp.status = falcon.HTTP_200
-        if req.params:
-            resp.media = req.params['id']
-        else:
-            resp.media = {'Message': 'Hello my friend'}
+        resp.body = dumps(req.context.user)
 
-    @falcon.before(auth, enum.ROLE_USER)
-    def on_get_name(self, req, resp, name):
+    @jsonschema.validate(load_schema('user_login'))
+    def on_post_login(self, req, resp):
+        raw_json = req.media
+        id = self.userServices.login(raw_json['username'],raw_json['password'])
+        token = auth.encode(id_user=int(id))
         resp.status = falcon.HTTP_200
-        resp.media = {'Message': 'Hello World ' + name}
+        resp.body = dumps({
+            'token': token
+        })
+
+    @jsonschema.validate(load_schema('user_register'))
+    def on_post_register(self, req, resp):
+        # récupérer le json
+        raw_json = req.media
+        resp.status = falcon.HTTP_200
+        id = self.userServices.registerUser(raw_json['email'], raw_json['username'], raw_json['password'])
+
+        token = auth.encode(id_user=int(id))
+        # renvoyer le json
+        resp.body = dumps(token)
 
 
     def on_get_picture(self, req, resp, picture_name):
@@ -55,25 +68,6 @@ class Users:
         resp.status = falcon.HTTP_200
         resp.body = dumps({'url': url})
 
-    @falcon.before(auth, enum.ROLE_ADMIN)
-    def on_get(self, req, resp):
-        print(req.context.user)
-        resp.status = falcon.HTTP_200
-        resp.media = {'Message': 'Hello World '}
-
-
-    @jsonschema.validate(load_schema('user_register'))
-    @falcon.before(auth, enum.ROLE_USER)
-    def on_post(self, req, resp):
-
-        # récupérer le json
-        raw_json = req.media
-
-        resp.status = falcon.HTTP_200
-        # renvoyer le json
-        resp.body = dumps(raw_json)
-
-
     def on_post_picture(self, req, resp, picture_name): #TODO savoir quoi mettre dans le body (surment picture_name)
         # récupérer le json
         raw_json = req.media
@@ -94,24 +88,3 @@ class Users:
         resp.status = falcon.HTTP_200
         # renvoyer le json
         resp.body = dumps(raw_json)
-
-    @jsonschema.validate(load_schema('user_login'))
-    def on_post_login(self, req, resp):
-        raw_json = req.media
-        id = self.userServices.login(raw_json['username'],raw_json['password'])
-        token = auth.encode(id_user=int(id))
-        resp.status = falcon.HTTP_200
-        resp.body = dumps({
-            'token': token
-        })
-
-    @jsonschema.validate(load_schema('user_register'))
-    def on_post_register(self, req, resp):
-        # récupérer le json
-        raw_json = req.media
-        resp.status = falcon.HTTP_200
-        id = self.userServices.registerUser(raw_json['email'], raw_json['username'], raw_json['password'])
-
-        token = auth.encode(id_user=int(id))
-        # renvoyer le json
-        resp.body = dumps(token)

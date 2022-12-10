@@ -6,6 +6,7 @@ from src.utils import enum
 
 from src.data.db import Db
 from src.utils.logging import logger
+from src.services.UsersService import UserService
 
 
 class Authenticate(object):
@@ -52,26 +53,14 @@ class Authenticate(object):
             logger.warning("Token expired "+err)
             raise falcon.HTTPUnauthorized('Unauthorized', 'Token expired')
 
-        db = Db.getInstance()
-        cur = db.conn.cursor()
 
-        cur.execute("SELECT * FROM youshare.users WHERE id_user=%s", [decodedToken['id']])
-        data = cur.fetchone()
+        userService = UserService.getInstance()
+        user = userService.getUser(decodedToken['id'])
 
-        db.conn.commit()
-        cur.close()
-
-        if data[2] != role and data[2] == enum.ROLE_USER:
-            db.conn.commit()
-            cur.close()
+        if user['role'] != role and user['role'] == enum.ROLE_USER:
             logger.warning("Unauthorized access")
             raise falcon.HTTPUnauthorized('Unauthorized','You don\'t have the right to access this data')
 
-        req.context.user = {
-            "id":data[0],
-            "username":data[1],
-            "role":data[2],
-            "email":data[3]
-        }
+        req.context.user = user
 
 

@@ -1,22 +1,6 @@
-### GET with integrated name
-GET http://localhost:8989/users/mehdi
+### GET User connected
+GET http://localhost:8989/users
 Authorization: {{token}}
-
-### GET with params
-GET http://localhost:8989/users/email?id=10
-Authorization: {{token}}
-
-
-### POST with json (resend the same object)
-
-POST http://localhost:8989/users/
-Content-Type: application/json
-
-{
-  "username" : "mehdi",
-  "email" : "mehdi@gmail.com",
-  "password" : "azerty123"
-}
 
 ### Login
 

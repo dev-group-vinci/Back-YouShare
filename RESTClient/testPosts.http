@@ -45,3 +45,21 @@ Authorization: {{token}}
 GET http://localhost:8989/posts/1/likes
 Authorization: {{token}}
 
+
+### Share a post
+
+POST http://localhost:8989/posts/1/shares
+Content-Type: application/json
+Authorization: {{token}}
+
+### unshare a post
+
+DELETE http://localhost:8989/posts/1/shares
+Content-Type: application/json
+Authorization: {{token}}
+
+### GET Shares of a post
+
+GET http://localhost:8989/posts/1/shares
+Authorization: {{token}}
+

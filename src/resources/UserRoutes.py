@@ -24,6 +24,17 @@ class Users:
         resp.status = falcon.HTTP_200
         resp.body = dumps(req.context.user)
 
+    @jsonschema.validate(load_schema('user_update'))
+    @falcon.before(auth,enum.ROLE_USER)
+    def on_put(self,req,resp):
+        raw_json = req.media
+
+        raw_json['id_user'] = req.context.user['id_user']
+        userUpdated = self.userServices.updateUser(raw_json)
+
+        resp.status = falcon.HTTP_200
+        resp.body = dumps(userUpdated)
+
     @jsonschema.validate(load_schema('user_login'))
     def on_post_login(self, req, resp):
         raw_json = req.media

@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 import os
 from src.utils import enum
 
-from src.data.db import Db
 from src.utils.logging import logger
 from src.services.UsersService import UserService
 
@@ -44,7 +43,7 @@ class Authenticate(object):
 
         if not token:
             logger.warning("No token specified")
-            raise falcon.HTTPNotImplemented('Not Implemented', 'Please specify a token')
+            raise falcon.HTTPUnauthorized('Unauthorized', 'Please specify a token')
 
 
         try:

@@ -2,6 +2,7 @@ from wsgiref.simple_server import make_server
 import falcon
 from src.middleware import logging
 from src.resources.PostResource import Posts
+from src.resources.FriendsResource import Friends
 from src.resources.UserRoutes import Users
 from src.resources.LikeResource import Likes
 from src.resources.ShareResource import Shares
@@ -22,6 +23,9 @@ if __name__ == '__main__':
     posts = Posts()
     likes = Likes()
     shares = Shares()
+    friends = Friends()
+
+    api.add_route('/friends',friends)
 
     api.add_route('/users',users)
     api.add_route('/users/{id_user}',users,suffix='id')

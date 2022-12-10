@@ -3,6 +3,7 @@ import falcon
 from src.middleware import logging
 from src.resources.PostResource import Posts
 from src.resources.UserRoutes import Users
+from src.resources.LikeResource import Likes
 from src.data.db import Db
 from src.utils.logging import logger
 import os
@@ -31,6 +32,7 @@ if __name__ == '__main__':
 
     users = Users()
     posts = Posts()
+    likes = Likes()
 
     api.add_route('/json', HelloWorldJson())
     api.add_route('/text', HelloWorldText())
@@ -44,7 +46,7 @@ if __name__ == '__main__':
     api.add_route('/posts', posts)
     api.add_route('/posts/{id_post}', posts, suffix='post')
 
-    api.add_route('/posts/{id_post}/likes', posts, suffix='like')
+    api.add_route('/posts/{id_post}/likes', likes)
 
     logger.info("Server started")
 

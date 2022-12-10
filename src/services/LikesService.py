@@ -36,6 +36,21 @@ class LikeService:
             cur.execute(" INSERT INTO youshare.likes (id_post, id_user)"
                         " VALUES (%s,%s)", [id_post, id_user])
 
+            self.conn.commit()
+        except BaseException as err:
+            self.conn.rollback()
+            logger.warning(err)
+            raise err
+        cur.close()
+
+        return self.readNbLike(id_post)
+
+    def readNbLike(self, id_post):
+        cur = None
+        try:
+
+            cur = self.conn.cursor()
+
             cur.execute(" SELECT COUNT(*) as num_likes"
                         " FROM youshare.likes"
                         " WHERE id_post = %s ", [id_post])

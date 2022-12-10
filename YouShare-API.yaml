@@ -1,0 +1,774 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/PFE-Youshare/YouShare-API/1.0.0
+info:
+  description: API for social network
+  version: "1.0.0"
+  title: YouShare API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: users
+    description: All users routes
+  - name: friends
+    description: All friends routes
+  - name: posts
+    description: All posts routes
+
+
+paths:
+  /users:
+    get:
+      tags:
+        - users
+      summary: Get user authenticated
+      security:
+        - jwtAuth: []
+      responses:
+        401:
+          description: Missing authentication
+        200:
+          description: Sent user informations
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/user'
+
+    put:
+      tags:
+        - users
+      summary: Update user
+      security:
+        - jwtAuth: []
+      requestBody:
+        description: the data who have to be updated
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/user'
+            example:
+              id_user: 1
+              biography: I love sharing video and making new friends
+      responses:
+        400:
+          description: User in request is not correct
+        401:
+          description: Missing authentication
+        200:
+          description: User updated
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/user'
+              example:
+                id_user: 1
+                username: Mehdi
+                role: user
+                email: mehdi@gmail.com
+                biography: I love sharing video and making new friends
+
+  /users/{id_user}:
+    put:
+      parameters:
+        - name: id_user
+          in: path
+          description: id of the user
+          required: true
+          schema:
+            type: integer
+            example: 1
+      tags:
+        - users
+      summary: Grant admin rights
+      security:
+        - jwtAuth: [ ]
+      responses:
+        400:
+          description: User is already an admin
+        404:
+          description: User not found
+        401:
+          description: Missing authentication
+        406:
+          description: Not authenticated as an admin
+        200:
+          description: User granted admin
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/user'
+              example:
+                id_user: 1
+                username: Mehdi
+                role: admin
+                email: mehdi@gmail.com
+                biography: I love sharing video
+
+    get:
+      parameters:
+        - name: id_user
+          in: path
+          description: id of the user
+          required: true
+          schema:
+            type: integer
+            example: 1
+      tags:
+        - users
+      summary: Get user
+      security:
+        - jwtAuth: [ ]
+      responses:
+        404:
+          description: User not found
+        401:
+          description: Missing authentication
+        200:
+          description: Sent user informations
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/user'
+
+
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Register a new user
+      requestBody:
+        description: The user who register
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/newUser'
+      responses:
+        409:
+          description: Email or username already registered
+        201:
+          description: User created
+          content:
+            'plain/text':
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjcwNjE1MTM2LCJleHAiOjE2NzA2OTc5MzYuMDE4MjA0fQ.Xke7W_58LiqP-U2VuNKgHWCM9mJKMGgR_pFt6h5mbBo
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Login a user
+      requestBody:
+        description: The user who register
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/user'
+            example:
+              username: Mehdi
+              password: azerty1234
+      responses:
+        401:
+          description: Bad username or password specified
+        404:
+          description: User not found
+        200:
+          description: User logged in
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+              example:
+                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjcwNjE1MTY2LCJleHAiOjE2NzA2OTc5NjYuNDk1NzQ5fQ.YVC3Q70i05cjXvkf60wkvN7HAEQJCJQymGN4jfBrmSc
+
+  /friends:
+    get:
+      summary: Get all friends
+      tags:
+        - friends
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        200:
+          description: Sent all friends data
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+
+  /friends/requests:
+    get:
+      summary: Get all friends requests
+      tags:
+        - friends
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        200:
+          description: Sent all friends requests
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+
+  /friends/self/requests:
+    get:
+      summary: Get all my friends requests
+      tags:
+        - friends
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        200:
+          description: Sent all my friends requests
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+
+  /friends/{id_friend}:
+    parameters:
+      - name: id_friend
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 6
+    post:
+      tags:
+        - friends
+      summary: Send friend request
+      security:
+        - jwtAuth : []
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: User not found
+        201:
+          description: Friend request sent
+    delete:
+      tags:
+        - friends
+      summary: remove friend or friend request
+      security:
+        - jwtAuth : []
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Friend or friend request not found
+        202:
+          description: Successfully deleted
+
+  /friends/{id_friend}/accept:
+    parameters:
+      - name: id_friend
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 10
+    post:
+      tags:
+        - friends
+      summary: Accept friend request
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: User not found
+        200:
+          description: Friend request accepted
+
+  /friends/{id_friend}/refuse:
+    parameters:
+      - name: id_friend
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 9
+    post:
+      tags:
+        - friends
+      summary: Refuse friend request
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: User not found
+        200:
+          description: Friend request refused
+
+  /posts:
+    get:
+      tags:
+        - posts
+      summary: retrieve the news feed
+      security:
+        - jwtAuth: []
+      responses:
+        401:
+          description: Missing authentication
+        200:
+          description: Sent posts information
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/post'
+    post:
+      tags:
+        - posts
+      summary: create a post
+      security:
+        - jwtAuth: [ ]
+      requestBody:
+        description: information about the post
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/newPost'
+      responses:
+        400:
+          description: Post in request is not correct
+        401:
+          description: Missing authentication
+        201:
+          description: Sent created post information
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/post'
+  /posts/{id_post}:
+    parameters:
+      - name: id_post
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: Id of the post
+    get:
+      tags:
+        - posts
+      summary: retrieve a specific post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post not found
+        200:
+          description: Sent post information
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/post'
+  /posts/{id_post}/likes/:
+    parameters:
+      - name: id_post
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: Id of the post
+    get:
+      tags:
+        - posts
+      summary: get number of likes
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post not found
+        200:
+          description: Sent posts likes
+          content:
+            'text/plain':
+              example: 10
+    post:
+      tags:
+        - posts
+      summary: Like a post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post not found
+        409:
+          description: Already liked
+        201:
+          description: Sent posts likes
+          content:
+            'text/plain':
+              example: 11
+    delete:
+      tags:
+        - posts
+      summary: Dislike a post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post or like  not found
+        202:
+          description: Sent posts likes
+          content:
+            'text/plain':
+              example: 9
+  /posts/{id_post}/shares/:
+    parameters:
+      - name: id_post
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: Id of the post
+    get:
+      tags:
+        - posts
+      summary: Retrieve share number of a post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post not found
+        200:
+          description: Sent posts shares
+          content:
+            'text/plain':
+              example: 10
+    post:
+      tags:
+        - posts
+      summary: Share a post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post not found
+        409:
+          description: Already shared
+        201:
+          description: Sent posts shares
+          content:
+            'text/plain':
+              example: 11
+    delete:
+      tags:
+        - posts
+      summary: Unshare a post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post or share not found
+        202:
+          description: Sent posts shares
+          content:
+            'text/plain':
+              example: 9
+
+
+  /posts/{id_post}/comments/:
+    parameters:
+      - name: id_post
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: Id of the post
+    get:
+      tags:
+        - posts
+      summary: retrieve the comments of a post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post not found
+        200:
+          description: Sent posts comments
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/comment'
+    post:
+      requestBody:
+        description: information about the comment
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/newComment'
+      tags:
+        - posts
+      summary: Comment a post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        400:
+          description: Comment in request is not correct
+        401:
+          description: Missing authentication
+        404:
+          description: Post not found
+        201:
+          description: Create a new comment for a post
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/comment'
+    delete:
+      tags:
+        - posts
+      summary: delete all comments of a post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        403:
+          description: Not identified as the corresponding user
+        404:
+          description: Post not found
+        202:
+          description: all comments of the post are deleted
+  /posts/{id_post}/comments/{id_comment}:
+    parameters:
+      - name: id_post
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: id of the post
+      - name: id_comment
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: id of the comment
+    delete:
+      tags:
+        - posts
+      summary: Delete a comment of a post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        400:
+          description: Comment in request is not correct
+        401:
+          description: Missing authentication
+        403:
+          description: Not identified as the corresponding user
+        404:
+          description: Post or comment not found
+        202:
+          description: Comment deleted
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/comment'
+              example:
+                id_comment: 1
+                id_user: 5
+                id_post: 1
+                id_comment_parent: -1
+                state: deleted
+                text: Trop bien expliqué mais vidéo un peu longue !
+                date_published: 2022-10-24 10:45:00
+                date_deleted: 2022-10-26 18:23:47
+
+components:
+  securitySchemes:
+    jwtAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    newComment:
+      type: object
+      properties:
+        id_user:
+          type: number
+        id_post:
+          type: number
+        id_comment_parent:
+          type: number
+        text:
+          type: string
+        state:
+          type: string
+          enum:
+            - published
+            - deleted
+      example:
+        id_user: 5
+        id_post: 1
+        id_comment_parent: -1
+        state: published
+        text: Trop bien expliqué mais vidéo un peu longue !
+    comment:
+      type: object
+      properties:
+        id_comment:
+          type: number
+        id_user:
+          type: number
+        id_post:
+          type: number
+        id_comment_parent:
+          type: number
+        text:
+          type: string
+        state:
+          type: string
+          enum:
+            - published
+            - deleted
+        date_published:
+          type: string
+          description: Date in ISO 8601, YYYY-MM-DD hh:mm:ss
+        date_deleted:
+          type: string
+          description: Date in ISO 8601, YYYY-MM-DD hh:mm:ss
+      example:
+        id_comment: 1
+        id_user: 5
+        id_post: 1
+        id_comment_parent: -1
+        state: published
+        text: Trop bien expliqué mais vidéo un peu longue !
+        date_published: 2022-10-24 10:45:00
+        date_deleted: null
+    post:
+      type: object
+      properties:
+        id_post:
+          type: number
+        id_url:
+          type: string
+        state:
+          type: string
+          enum:
+            - published
+            - deleted
+        text:
+          type: string
+        date_published:
+          type: string
+          description: Date in ISO 8601, YYYY-MM-DD hh:mm:ss
+        date_deleted:
+          type: string
+          description: Date in ISO 8601, YYYY-MM-DD hh:mm:ss
+      example:
+        id_post: 1
+        id_url: TaAM5MovXp0
+        state: published
+        text: Merci Jamy !
+        date_published: 2022-10-24 10:45:00
+        date_deleted: null
+    newPost:
+      type: object
+      properties:
+        id_url:
+          type: string
+        state:
+          type: string
+          enum:
+            - published
+            - deleted
+        text:
+          type: string
+      example:
+        id_url: TaAM5MovXp0
+        state: published
+        text: Merci Jamy !
+    newUser:
+      type: object
+      properties:
+        username:
+          type: string
+        role:
+          type: string
+          enum:
+            - user
+            - admin
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        username: Mehdi
+        role : user
+        email : mehdi@gmail.com
+        password : azerty1234
+    user:
+      type: object
+      properties:
+        id_user:
+          type: integer
+        username:
+          type: string
+        role:
+          type: string
+          enum:
+            - user
+            - admin
+        email:
+          type: string
+        biography:
+          type: string
+      example:
+        id_user: 1
+        username: Mehdi
+        role: user
+        email: mehdi@gmail.com
+        biography: I love sharing video

@@ -1,5 +1,5 @@
 {
-    "title": "User Schema",
+    "title": "User update schema",
     "description" : "All the data of a user",
     "type": "object",
     "properties": {
@@ -15,14 +15,14 @@
             "format": "email",
             "maxLength": 128
         },
+        "biography": {
+            "title": "Biography of the user",
+            "type" : "string",
+            "maxLength": 200
+        },
         "password": {
             "title": "Password",
             "type": "string"
         }
-    },
-    "required": [
-        "username",
-        "email",
-        "password"
-    ]
+    }
 }

@@ -13,6 +13,21 @@ Content-Type: application/json
 client.global.set("token", response.body.token);
 %}
 
+### Register
+
+POST http://localhost:8989/users/register
+Content-Type: application/json
+
+{
+  "username": "zoe",
+  "email" : "zoe@gmail.com",
+  "password" : "zoe"
+}
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
 
 ### Login
 
@@ -23,6 +38,17 @@ Content-Type: application/json
   "username" : "rayan",
   "password" : "M0tde@"
 }
+
+### Login
+
+POST http://localhost:8989/users/login
+Content-Type: application/json
+
+{
+  "username" : "zoe",
+  "password" : "zoe"
+}
+
 
 > {%
 client.global.set("token", response.body.token);

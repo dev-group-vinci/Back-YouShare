@@ -22,8 +22,7 @@
         },
         "password": {
             "title": "Password",
-            "type": "string",
-            "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$"
+            "type": "string"
         }
     }
 }

@@ -8,19 +8,6 @@ from src.utils.logging import logger
 
 import os
 
-
-class HelloWorldJson:
-    def on_get(self, req, resp):
-        resp.status = falcon.HTTP_200
-        resp.media = {'Message': 'Hello World'}
-
-
-class HelloWorldText:
-    def on_get(self, req, resp):
-        resp.status = falcon.HTTP_200
-        resp.body = "Hello World"
-
-
 if __name__ == '__main__':
     api = falcon.App(cors_enable=True)
 
@@ -31,8 +18,6 @@ if __name__ == '__main__':
     users = Users()
     posts = Posts()
 
-    api.add_route('/json', HelloWorldJson())
-    api.add_route('/text', HelloWorldText())
     api.add_route('/users',users)
     api.add_route('/users/{id_user}',users,suffix='id')
     api.add_route('/users/login', users, suffix='login')

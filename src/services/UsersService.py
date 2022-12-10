@@ -55,7 +55,6 @@ class UserService:
         user = cur.fetchone()
         self.conn.commit()
         cur.close()
-
         return user is not None
 
     def grantAdmin(self,id_user):
@@ -155,7 +154,7 @@ class UserService:
     def registerUser(self, email, username, password: str):
         cur = self.conn.cursor()
 
-        if self.emailExist(email) is not None:
+        if self.emailExist(email):
             self.conn.commit()
             cur.close()
             raise falcon.HTTPConflict('Conflict', 'The email address is already used')

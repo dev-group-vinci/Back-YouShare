@@ -59,11 +59,11 @@ create table youshare.comments
 );
 
 create table youshare.friendships(
-    id_friendship serial primary key ,
     id_asker integer not null,
     id_receiver integer not null,
     date timestamp not null default CURRENT_TIMESTAMP,
     state varchar(8) not null default 'pending' CHECK (state='pending' or state='accepted' or state='refused'),
+    PRIMARY KEY (id_asker,id_receiver),
     FOREIGN KEY (id_asker) REFERENCES youshare.users (id_user),
     FOREIGN KEY (id_receiver) REFERENCES youshare.users (id_user)
 );

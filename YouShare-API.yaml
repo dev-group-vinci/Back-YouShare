@@ -88,6 +88,8 @@ paths:
       security:
         - jwtAuth: [ ]
       responses:
+        400:
+          description: User is already an admin
         404:
           description: User not found
         401:
@@ -109,7 +111,7 @@ paths:
 
     get:
       parameters:
-        - name: id
+        - name: id_user
           in: path
           description: id of the user
           required: true

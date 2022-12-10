@@ -45,6 +45,29 @@ class LikeService:
 
         return self.readNbLike(id_post)
 
+    def unlike(self, id_post, id_user):
+        cur = None
+        try:
+            self.postServices.readOne(id_post)
+
+            if not self.isLiked(id_post, id_user):
+                logger.warning("Post : {} is already unliked for user : {}".format(id_post, id_user))
+                raise falcon.HTTPConflict
+
+            cur = self.conn.cursor()
+
+            cur.execute(" DELETE FROM youshare.likes"
+                        " WHERE id_post = %s AND id_user = %s", [id_post, id_user])
+
+            self.conn.commit()
+        except BaseException as err:
+            self.conn.rollback()
+            logger.warning(err)
+            raise err
+        cur.close()
+
+        return self.readNbLike(id_post)
+
     def readNbLike(self, id_post):
         cur = None
         try:

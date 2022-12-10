@@ -35,6 +35,19 @@ class Users:
         resp.status = falcon.HTTP_200
         resp.body = dumps(userUpdated)
 
+    @falcon.before(auth,enum.ROLE_USER)
+    def on_get_id(self,req,resp,id_user):
+        user = self.userServices.getUser(id_user)
+        resp.status = falcon.HTTP_200
+        resp.body = dumps(user)
+
+    @falcon.before(auth,enum.ROLE_ADMIN)
+    def on_put_id(self,req,resp,id_user):
+        user = self.userServices.grantAdmin(id_user)
+        resp.status = falcon.HTTP_200
+        resp.body = dumps(user)
+
+
     @jsonschema.validate(load_schema('user_login'))
     def on_post_login(self, req, resp):
         raw_json = req.media
@@ -49,11 +62,11 @@ class Users:
     def on_post_register(self, req, resp):
         # récupérer le json
         raw_json = req.media
-        resp.status = falcon.HTTP_200
-        id = self.userServices.registerUser(raw_json['email'], raw_json['username'], raw_json['password'])
 
+        id = self.userServices.registerUser(raw_json['email'], raw_json['username'], raw_json['password'])
         token = auth.encode(id_user=int(id))
-        # renvoyer le json
+
+        resp.status = falcon.HTTP_201
         resp.body = dumps(token)
 
 

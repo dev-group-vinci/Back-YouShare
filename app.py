@@ -33,6 +33,7 @@ if __name__ == '__main__':
     api.add_route('/json', HelloWorldJson())
     api.add_route('/text', HelloWorldText())
     api.add_route('/users',users)
+    api.add_route('/users/{id_user}',users,suffix='id')
     api.add_route('/users/login', users, suffix='login')
     api.add_route('/users/register',users,suffix='register')
     api.add_route('/users/picture/{picture_name}', Users(), suffix='picture')

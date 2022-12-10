@@ -1,6 +1,7 @@
 import bcrypt
 import falcon
 from src.data.db import Db
+from src.utils import enum
 
 
 class UserService:
@@ -56,6 +57,29 @@ class UserService:
         cur.close()
 
         return user is not None
+
+    def grantAdmin(self,id_user):
+        # Verify if user exist and send 404 if not
+        user = self.getUser(id_user)
+
+        if user['role'] == enum.ROLE_ADMIN:
+            raise falcon.HTTPBadRequest("Bad Request", "User is already an admin")
+
+        cur = self.conn.cursor()
+        cur.execute("UPDATE youshare.users SET role = %s WHERE id_user = %s "
+                    "RETURNING id_user,username,role,email,biography",[enum.ROLE_ADMIN,id_user])
+        user = cur.fetchone()
+        self.conn.commit()
+        cur.close()
+
+        return {
+            "id_user": user[0],
+            "username": user[1],
+            "role": user[2],
+            "email": user[3],
+            "biography": user[4]
+        }
+
 
     def updateUser(self, body):
         cur = self.conn.cursor()

@@ -1,15 +1,17 @@
 from wsgiref.simple_server import make_server
 import falcon
-
+from src.middleware import logging
 from src.resources.PostResource import Posts
 from src.resources.UserRoutes import Users
+from src.resources.LikeResource import Likes
 from src.data.db import Db
 from src.utils.logging import logger
-
 import os
 
 if __name__ == '__main__':
-    api = falcon.App(cors_enable=True)
+    api = falcon.App(cors_enable=True, middleware=[
+        logging.LoggingMiddleware()
+    ])
 
     # database connection
     database = Db()
@@ -17,6 +19,7 @@ if __name__ == '__main__':
 
     users = Users()
     posts = Posts()
+    likes = Likes()
 
     api.add_route('/users',users)
     api.add_route('/users/{id_user}',users,suffix='id')
@@ -27,7 +30,7 @@ if __name__ == '__main__':
     api.add_route('/posts', posts)
     api.add_route('/posts/{id_post}', posts, suffix='post')
 
-    api.add_route('/posts/{id_post}/likes', posts, suffix='like')
+    api.add_route('/posts/{id_post}/likes', likes)
 
     logger.info("Server started")
 

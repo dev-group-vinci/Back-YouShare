@@ -70,7 +70,7 @@ class Users:
         resp.body = dumps(token)
 
 
-    def on_get_picture(self, req, resp, picture_name):
+    def on_get_picture(self, req, resp, id_user):
         connection_string = os.getenv("CONNECTION_STRING")
         container_name = os.getenv("CONTAINER_NAME")
 
@@ -85,9 +85,8 @@ class Users:
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
-        blob_client = blob_service_client.get_blob_client(container=container_name, blob=picture_name)
+        blob_client = blob_service_client.get_blob_client(container=container_name, blob="helloworld12345.png")
         url = blob_client.url + "?" + sas_token
-
 
         resp.status = falcon.HTTP_200
         resp.body = dumps({'url': url})

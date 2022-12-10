@@ -78,3 +78,8 @@ Authorization: {{token}}
 
 PUT http://localhost:8989/users/1
 Authorization: {{token}}
+
+### Get picture of a user
+
+GET http://localhost:8989/users/1
+Authorization: {{token}}

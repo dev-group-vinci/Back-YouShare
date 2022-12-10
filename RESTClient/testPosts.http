@@ -4,8 +4,8 @@ POST http://localhost:8989/users/login
 Content-Type: application/json
 
 {
-  "username" : "mehdi",
-  "password" : "azerty123"
+  "username" : "rayan",
+  "password" : "M0tde@"
 }
 
 > {%
@@ -24,12 +24,24 @@ Authorization: {{token}}
 }
 
 ### Get a post
-GET http://localhost:8989/posts/3
+GET http://localhost:8989/posts/300
 Authorization: {{token}}
 
 
 ### Like a post
 
-POST http://localhost:8989/posts/4/likes
+POST http://localhost:8989/posts/1/likes
 Content-Type: application/json
 Authorization: {{token}}
+
+### unlike a post
+
+DELETE http://localhost:8989/posts/1/likes
+Content-Type: application/json
+Authorization: {{token}}
+
+### GET Likes of a post
+
+GET http://localhost:8989/posts/1/likes
+Authorization: {{token}}
+

@@ -1,37 +1,3 @@
-### GET with integrated name
-GET http://localhost:8989/users/mehdi
-Authorization: {{token}}
-
-### GET with params
-GET http://localhost:8989/users/email?id=10
-Authorization: {{token}}
-
-
-### POST with json (resend the same object)
-
-POST http://localhost:8989/users/
-Content-Type: application/json
-
-{
-  "username" : "mehdi",
-  "email" : "mehdi@gmail.com",
-  "password" : "azerty123"
-}
-
-### Login
-
-POST http://localhost:8989/users/login
-Content-Type: application/json
-
-{
-  "username" : "rayan",
-  "password" : "M0td@"
-}
-
-> {%
-client.global.set("token", response.body.token);
-%}
-
 ### Register
 
 POST http://localhost:8989/users/register
@@ -43,6 +9,46 @@ Content-Type: application/json
   "password" : "M0tde@"
 }
 
-### Simple get
-GET http://localhost:8989/users/
+> {%
+client.global.set("token", response.body.token);
+%}
+
+
+### Login
+
+POST http://localhost:8989/users/login
+Content-Type: application/json
+
+{
+  "username" : "rayan",
+  "password" : "M0tde@"
+}
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
+### GET User connected
+GET http://localhost:8989/users
+Authorization: {{token}}
+
+### Update user
+
+PUT http://localhost:8989/users
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "username" : "rayan",
+  "biography": "Je suis heureux"
+}
+
+### Get user by id
+
+GET http://localhost:8989/users/1
+Authorization: {{token}}
+
+### Make user admin
+
+PUT http://localhost:8989/users/1
 Authorization: {{token}}

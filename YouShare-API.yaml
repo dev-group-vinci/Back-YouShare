@@ -72,10 +72,10 @@ paths:
                 email: mehdi@gmail.com
                 biography: I love sharing video and making new friends
 
-  /users/{id}:
+  /users/{id_user}:
     put:
       parameters:
-        - name: id
+        - name: id_user
           in: path
           description: id of the user
           required: true

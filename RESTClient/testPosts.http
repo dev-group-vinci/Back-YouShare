@@ -30,7 +30,13 @@ Authorization: {{token}}
 
 ### Like a post
 
-POST http://localhost:8989/posts/4/likes
+POST http://localhost:8989/posts/1/likes
+Content-Type: application/json
+Authorization: {{token}}
+
+### unlike a post
+
+DELETE http://localhost:8989/posts/1/likes
 Content-Type: application/json
 Authorization: {{token}}
 
@@ -38,3 +44,4 @@ Authorization: {{token}}
 
 GET http://localhost:8989/posts/1/likes
 Authorization: {{token}}
+

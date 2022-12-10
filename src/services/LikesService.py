@@ -1,8 +1,6 @@
-import falcon
-from src.data.db import Db
-from datetime import datetime, timezone
-from src.utils.logging import logger
+from src.utils import enum
 from src.services.PostsService import PostService
+from src.services.AbstractService import AbstractService
 
 class LikeService:
     __instance = None
@@ -18,93 +16,15 @@ class LikeService:
             raise Exception("UserService instance already exist !!")
         else:
             LikeService.__instance = self
-        db = Db.getInstance()
         self.postServices = PostService.getInstance()
-        self.conn = db.conn
+        self.abstractService = AbstractService.getInstance()
 
     def like(self, id_post, id_user):
-        cur = None
-        try:
-            self.postServices.readOne(id_post)
-
-            if self.isLiked(id_post, id_user):
-                logger.warning("Post : {} is already liked for user : {}".format(id_post, id_user))
-                raise falcon.HTTPConflict
-
-            cur = self.conn.cursor()
-
-            cur.execute(" INSERT INTO youshare.likes (id_post, id_user)"
-                        " VALUES (%s,%s)", [id_post, id_user])
-
-            self.conn.commit()
-        except BaseException as err:
-            self.conn.rollback()
-            logger.warning(err)
-            raise err
-        cur.close()
-
-        return self.readNbLike(id_post)
+        return self.abstractService.add(enum.LIKE_TABLE, id_post, id_user)
 
     def unlike(self, id_post, id_user):
-        cur = None
-        try:
-            self.postServices.readOne(id_post)
-
-            if not self.isLiked(id_post, id_user):
-                logger.warning("Post : {} is already unliked for user : {}".format(id_post, id_user))
-                raise falcon.HTTPConflict
-
-            cur = self.conn.cursor()
-
-            cur.execute(" DELETE FROM youshare.likes"
-                        " WHERE id_post = %s AND id_user = %s", [id_post, id_user])
-
-            self.conn.commit()
-        except BaseException as err:
-            self.conn.rollback()
-            logger.warning(err)
-            raise err
-        cur.close()
-
-        return self.readNbLike(id_post)
+        return self.abstractService.remove(enum.LIKE_TABLE, id_post, id_user)
 
     def readNbLike(self, id_post):
-        cur = None
-        try:
+        return self.abstractService.readNbItem(enum.LIKE_TABLE, id_post)
 
-            cur = self.conn.cursor()
-
-            cur.execute(" SELECT COUNT(*) as num_likes"
-                        " FROM youshare.likes"
-                        " WHERE id_post = %s ", [id_post])
-
-            self.conn.commit()
-        except BaseException as err:
-            self.conn.rollback()
-            logger.warning(err)
-            raise err
-
-        num_likes = cur.fetchone()[0]
-        cur.close()
-
-        return num_likes
-
-    def isLiked(self, id_post, id_user):
-        cur = None
-        try:
-            self.postServices.readOne(id_post)
-            cur = self.conn.cursor()
-            cur.execute(" SELECT *"
-                        " FROM youshare.likes"
-                        " WHERE id_post = %s AND id_user = %s", [id_post, id_user])
-
-            like = cur.fetchone()
-            self.conn.commit()
-
-        except BaseException as err:
-            self.conn.rollback()
-            logger.warning(err)
-            raise err
-
-        cur.close()
-        return like is not None

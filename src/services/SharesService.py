@@ -1,7 +1,3 @@
-import falcon
-from src.data.db import Db
-from datetime import datetime, timezone
-from src.utils.logging import logger
 from src.services.PostsService import PostService
 from src.services.AbstractService import AbstractService
 from src.utils import enum

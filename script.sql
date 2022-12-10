@@ -5,7 +5,7 @@ CREATE SCHEMA youshare;
 create table youshare.users
 (
     id_user  serial                primary key,
-    username varchar(60)          not null,
+    username varchar(60)          not null unique,
     role     varchar(10)            not null default 'user' CHECK (role = 'admin' or role = 'user'),
     email    varchar(128)          not null unique ,
     password char(60)              not null,
@@ -15,44 +15,46 @@ create table youshare.users
 
 create table youshare.posts
 (
-    id_video serial                primary key,
+    id_post serial                primary key,
+    id_user  integer               not null,
     id_url   char(11)              not null,
     state    varchar(9)            not null default 'published' CHECK (state = 'published' or state='deleted'),
     date_published    TIMESTAMP not null default CURRENT_TIMESTAMP,
     date_deleted      TIMESTAMP ,
-    text varchar(280) not null
+    text varchar(280) not null,
+    FOREIGN KEY (id_user) REFERENCES youshare.users (id_user)
 );
 
 create table youshare.shares
 (
     id_user integer not null,
-    id_video integer not null,
+    id_post integer not null,
     FOREIGN KEY (id_user) REFERENCES youshare.users (id_user),
-    FOREIGN KEY (id_video) REFERENCES youshare.posts (id_video),
-    PRIMARY KEY (id_user,id_video)
+    FOREIGN KEY (id_post) REFERENCES youshare.posts (id_post),
+    PRIMARY KEY (id_user,id_post)
 );
 
 create table youshare.likes
 (
     id_user integer not null,
-    id_video integer not null,
+    id_post integer not null,
     FOREIGN KEY (id_user) REFERENCES youshare.users (id_user),
-    FOREIGN KEY (id_video) REFERENCES youshare.posts (id_video),
-    PRIMARY KEY (id_user,id_video)
+    FOREIGN KEY (id_post) REFERENCES youshare.posts (id_post),
+    PRIMARY KEY (id_user,id_post)
 );
 
 create table youshare.comments
 (
     id_comment serial primary key,
     id_user integer not null,
-    id_video integer not null,
+    id_post integer not null,
     id_comment_parent integer,
     text varchar(280) not null,
     state    varchar(9) not null default 'published' CHECK (state = 'published' or state='deleted'),
     date_published    TIMESTAMP not null default CURRENT_TIMESTAMP,
     date_deleted      TIMESTAMP ,
     FOREIGN KEY (id_user) REFERENCES youshare.users (id_user),
-    FOREIGN KEY (id_video) REFERENCES youshare.posts (id_video),
+    FOREIGN KEY (id_post) REFERENCES youshare.posts (id_post),
     FOREIGN KEY (id_comment_parent) REFERENCES youshare.comments (id_comment)
 );
 

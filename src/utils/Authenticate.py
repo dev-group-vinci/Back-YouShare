@@ -45,6 +45,7 @@ class Authenticate(object):
             logger.warning("No token specified")
             raise falcon.HTTPUnauthorized('Unauthorized', 'Please specify a token')
 
+
         try:
             decodedToken = self.decode_and_validate_token(token)
         except jwt.exceptions.DecodeError as err:

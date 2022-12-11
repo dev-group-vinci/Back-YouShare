@@ -1,6 +1,7 @@
 import falcon
 from src.models.comments import Comment
 from src.data.db import Db
+from src.utils.enum import POST_DELETED
 from src.utils.logging import logger
 from src.services.PostsService import PostService
 
@@ -58,7 +59,10 @@ class CommentService:
         cur = None
         try:
 
-            self.postServices.readOne(commentObject.id_post)
+            post = self.postServices.readOne(commentObject.id_post)
+            if post.state == POST_DELETED:
+                logger.warning("The post is actually deleted you can't comment it")
+                raise falcon.HTTPForbidden("The post is actually deleted you can't comment it")
 
             cur = self.conn.cursor()
 

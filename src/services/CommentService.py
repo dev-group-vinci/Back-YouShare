@@ -53,3 +53,34 @@ class CommentService:
         self.conn.commit()
         cur.close()
         return listComment
+
+    def addComment(self, commentObject):
+        cur = None
+        try:
+
+            self.postServices.readOne(commentObject.id_post)
+
+            cur = self.conn.cursor()
+
+            cur.execute(
+                "INSERT INTO youshare.comments (id_user, id_post,"
+                " id_comment_parent, text, state) VALUES (%s,%s,%s,%s,%s)"
+                "RETURNING id_comment, id_user, id_post,"
+                " id_comment_parent, text, state, date_published,"
+                " date_deleted"
+                , [commentObject.id_user, commentObject.id_post,
+                   commentObject.id_comment_parent, commentObject.text,
+                   commentObject.state]
+            )
+
+            comment_tuple = cur.fetchone()
+            comment = Comment.from_tuple(comment_tuple)
+            print("comment :: ", comment.text)
+        except BaseException as err:
+            self.conn.rollback()
+            logger.warning(err)
+            raise err
+
+        self.conn.commit()
+        cur.close()
+        return comment

@@ -42,7 +42,7 @@ if __name__ == '__main__':
     api.add_route('/posts/{id_post}/shares', shares)
 
     api.add_route('/posts/{id_post}/comments/', comments)
-
+    api.add_route('/posts/comments/', comments)
 
     logger.info("Server started")
 

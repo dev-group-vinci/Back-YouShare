@@ -22,11 +22,17 @@ class Friends:
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_get_requests(self,req,resp):
-        pass
+        list_friends = self.friendsService.getAllFriendRequests(req.context.user['id_user'])
+
+        resp.status = falcon.HTTP_200
+        resp.body = dumps(list_friends)
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_get_self(self,req,resp):
-        pass
+        list_friends = self.friendsService.getAllMyFriendRequests(req.context.user['id_user'])
+
+        resp.status = falcon.HTTP_200
+        resp.body = dumps(list_friends)
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_post_id(self,req,resp,id_friend):
@@ -47,6 +53,7 @@ class Friends:
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_post_refuse(self,req,resp,id_friend):
-        pass
+        self.friendsService.refuseFriendRequest(req.context.user['id_user'], int(id_friend))
+        resp.status = falcon.HTTP_200
 
 

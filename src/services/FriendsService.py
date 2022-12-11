@@ -32,8 +32,8 @@ class FriendsService:
             "FROM youshare.friendships as fr, youshare.users as us "
             "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
             "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
-            "AND fr.state = 'accepted' ",
-            (id_user, id_user, id_user)
+            "AND fr.state = %s ",
+            (id_user, id_user, id_user,enum.STATE_ACCEPTED)
         )
 
         # Récupérez les résultats de la requête
@@ -57,10 +57,70 @@ class FriendsService:
         return list
 
     def getAllFriendRequests(self,id_user):
-        pass
+        cur = self.conn.cursor()
+
+        cur.execute(
+            "SELECT us.id_user,us.username,us.email,us.biography,us.role,fr.state "
+            "FROM youshare.friendships as fr, youshare.users as us "
+            "WHERE us.id_user = id_asker "
+            "AND fr.id_receiver = %s "
+            "AND fr.state != %s ",
+            (id_user, enum.STATE_ACCEPTED)
+        )
+
+        # Récupérez les résultats de la requête
+        friends = cur.fetchall()
+
+        list = []
+
+        # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
+        for friend in friends:
+            user = {
+                "id_user": friend[0],
+                "username": friend[1],
+                "role": friend[4],
+                "email": friend[2],
+                "biography": friend[3],
+                "state":friend[5]
+            }
+            list.append(user)
+
+        self.conn.commit()
+        cur.close()
+        return list
 
     def getAllMyFriendRequests(self,id_user):
-        pass
+        cur = self.conn.cursor()
+
+        cur.execute(
+            "SELECT us.id_user,us.username,us.email,us.biography,us.role,fr.state "
+            "FROM youshare.friendships as fr, youshare.users as us "
+            "WHERE us.id_user = id_receiver "
+            "AND fr.id_asker = %s "
+            "AND fr.state != %s ",
+            (id_user, enum.STATE_ACCEPTED)
+        )
+
+        # Récupérez les résultats de la requête
+        friends = cur.fetchall()
+
+        list = []
+
+        # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
+        for friend in friends:
+            user = {
+                "id_user": friend[0],
+                "username": friend[1],
+                "role": friend[4],
+                "email": friend[2],
+                "biography": friend[3],
+                "state":friend[5]
+            }
+            list.append(user)
+
+        self.conn.commit()
+        cur.close()
+        return list
 
     def friendRequestExist(self,id_asker,id_receiver):
 

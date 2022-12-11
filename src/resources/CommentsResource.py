@@ -1,8 +1,9 @@
 import falcon
-from falcon.media.validators import jsonschema
-from src.media import load_schema
+
 from src.utils.Authenticate import Authenticate
 from src.utils import enum
+from src.utils.json import datetime_to_iso_str
+from src.models.comments import Comment
 from src.services.CommentService import CommentService
 from json import dumps
 
@@ -19,4 +20,19 @@ class Comments:
         comments = self.commentServices.readCommentsPost(id_post)
 
         resp.status = falcon.HTTP_200
-        resp.body = dumps(comments)
+        resp.body = dumps(comments, default=datetime_to_iso_str)
+
+    @falcon.before(auth, enum.ROLE_USER)
+    def on_post(self, req, resp):
+        id_user = req.context.user['id_user']
+
+        raw_json = req.media
+        comment = Comment()
+        comment.create_new_comment_from_json(raw_json)
+        comment.id_user = id_user
+        if comment.id_comment_parent == -1:
+            comment.id_comment_parent = None
+        comment = self.commentServices.addComment(comment)
+
+        resp.status = falcon.HTTP_201
+        resp.body = dumps(comment, default=datetime_to_iso_str)

@@ -23,9 +23,7 @@ class FriendsService:
 
 
     def getAll(self,id_user):
-
         cur = self.conn.cursor()
-
 
         cur.execute(
             "SELECT us.id_user,us.username,us.email,us.biography,us.role "
@@ -56,4 +54,20 @@ class FriendsService:
         cur.close()
         return list
 
+    def getAllFriendRequests(self,id_user):
+        pass
 
+    def getAllMyFriendRequests(self,id_user):
+        pass
+
+    def addFriendRequest(self,id_user,id_receiver):
+        pass
+
+    def deleteFriendRequest(self,id_user,id_friend):
+        pass
+
+    def acceptFriendRequest(self,id_user,id_friend):
+        pass
+
+    def refuseFriendRequest(self,id_user,id_friend):
+        pass

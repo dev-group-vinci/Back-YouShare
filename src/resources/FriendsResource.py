@@ -36,4 +36,12 @@ class Friends:
     def on_delete_id(self,req,resp,id_friend):
         pass
 
+    @falcon.before(auth,enum.ROLE_USER)
+    def on_post_accept(self,req,resp,id_friend):
+        pass
+
+    @falcon.before(auth,enum.ROLE_USER)
+    def on_post_refuse(self,req,resp,id_friend):
+        pass
+
 

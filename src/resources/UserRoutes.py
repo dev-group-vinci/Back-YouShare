@@ -67,7 +67,9 @@ class Users:
         token = auth.encode(id_user=int(id))
 
         resp.status = falcon.HTTP_201
-        resp.body = dumps(token)
+        resp.body = dumps({
+            'token': token
+        })
 
 
     def on_get_picture(self, req, resp, picture_name):

@@ -15,3 +15,10 @@ class Comment:
     @classmethod
     def from_tuple(cls, tuple):
         return cls(*tuple)
+
+    def create_new_comment_from_json(self, json):
+        self.id_post = json['id_post']
+        self.id_comment_parent = json['id_comment_parent']
+        self.state = json['state']
+        self.text = json['text']
+        return self

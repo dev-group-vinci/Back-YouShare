@@ -29,6 +29,8 @@ if __name__ == '__main__':
     api.add_route('/friends/requests',friends,suffix='requests')
     api.add_route('/friends/self/requests',friends,suffix='self')
     api.add_route('/friends/{id_friend}',friends,suffix='id')
+    api.add_route('/friends/{id_friend}/accept',friends,suffix='accept')
+    api.add_route('/friends/{id_friend}/refuse', friends, suffix='refuse')
 
     api.add_route('/users',users)
     api.add_route('/users/{id_user}',users,suffix='id')

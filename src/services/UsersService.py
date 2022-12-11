@@ -40,6 +40,16 @@ class UserService:
             "biography": user[4]
         }
 
+    def userExist(self,id_user):
+        cur = self.conn.cursor()
+        cur.execute("SELECT id_user, username, role, email, biography FROM youshare.users WHERE id_user=%s",
+                    [id_user])
+        user = cur.fetchone()
+        self.conn.commit()
+        cur.close()
+
+        return user is not None
+
     def usernameExist(self,username):
         cur = self.conn.cursor()
         cur.execute("SELECT id_user, username, role, email, biography FROM youshare.users WHERE lower(username)=lower(%s)", [username])

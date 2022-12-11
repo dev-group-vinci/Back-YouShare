@@ -30,15 +30,20 @@ class Friends:
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_post_id(self,req,resp,id_friend):
-        pass
+        self.friendsService.addFriendRequest(req.context.user['id_user'],int(id_friend))
+        resp.status = falcon.HTTP_201
+
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_delete_id(self,req,resp,id_friend):
-        pass
+        self.friendsService.deleteFriendRequest(req.context.user['id_user'], int(id_friend))
+        resp.status = falcon.HTTP_200
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_post_accept(self,req,resp,id_friend):
-        pass
+
+        self.friendsService.acceptFriendRequest(req.context.user['id_user'], int(id_friend))
+        resp.status = falcon.HTTP_200
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_post_refuse(self,req,resp,id_friend):

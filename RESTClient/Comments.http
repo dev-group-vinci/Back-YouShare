@@ -1,0 +1,31 @@
+### Login
+
+POST http://localhost:8989/users/login
+Content-Type: application/json
+
+{
+  "username" : "rayan",
+  "password" : "M0tde@"
+}
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
+
+### Create comment on a post
+
+POST http://localhost:8989/posts/comments/
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "id_post": 1,
+  "id_comment_parent": -1,
+  "state": "published",
+  "text": "Trop bien expliqué mais vidéo un peu longue !"
+}
+
+### Get comments of a post
+GET http://localhost:8989/posts/1/comments/
+Authorization: {{token}}

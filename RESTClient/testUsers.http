@@ -81,5 +81,5 @@ Authorization: {{token}}
 
 ### Get picture of a user
 
-GET http://localhost:8989/users/1
+GET http://localhost:8989/users/1/picture
 Authorization: {{token}}

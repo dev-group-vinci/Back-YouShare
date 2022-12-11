@@ -65,8 +65,9 @@ Authorization: {{token}}
 Content-Type: application/json
 
 {
-  "username" : "rayan",
-  "biography": "Je suis heureux"
+  "biography": "Je suis heureuse",
+  "new_password": "zoe",
+  "password": "zou"
 }
 
 ### Get user by id

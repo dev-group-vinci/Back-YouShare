@@ -6,6 +6,7 @@ from src.resources.FriendsResource import Friends
 from src.resources.UserRoutes import Users
 from src.resources.LikeResource import Likes
 from src.resources.ShareResource import Shares
+from src.resources.CommentsResource import Comments
 from src.data.db import Db
 from src.utils.logging import logger
 import os
@@ -24,6 +25,7 @@ if __name__ == '__main__':
     likes = Likes()
     shares = Shares()
     friends = Friends()
+    comments = Comments()
 
     api.add_route('/friends',friends)
     api.add_route('/friends/requests',friends,suffix='requests')
@@ -43,6 +45,9 @@ if __name__ == '__main__':
 
     api.add_route('/posts/{id_post}/likes', likes)
     api.add_route('/posts/{id_post}/shares', shares)
+
+    api.add_route('/posts/{id_post}/comments/', comments)
+    api.add_route('/posts/comments/', comments)
 
     logger.info("Server started")
 

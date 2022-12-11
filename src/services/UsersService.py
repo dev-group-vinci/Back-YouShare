@@ -61,20 +61,20 @@ class UserService:
         cur.close()
         return user is not None
 
-    def emailAndIDExist(self, email, id_user):
+    def emailAndIdDifferentExist(self, email, id_user):
         cur = self.conn.cursor()
         cur.execute(
-            "SELECT id_user, username, role, email, biography FROM youshare.users WHERE lower(email) = lower(%s) and id_user=%s",
+            "SELECT id_user, username, role, email, biography FROM youshare.users WHERE lower(email) = lower(%s) and id_user!=%s",
             [email, id_user])
         user = cur.fetchone()
         self.conn.commit()
         cur.close()
         return user is not None
 
-    def usernameAndIDExist(self, username, id_user):
+    def usernameAndIdDifferentExist(self, username, id_user):
         cur = self.conn.cursor()
         cur.execute(
-            "SELECT id_user, username, role, email, biography FROM youshare.users WHERE lower(username)=lower(%s) AND id_user = %s",
+            "SELECT id_user, username, role, email, biography FROM youshare.users WHERE lower(username)=lower(%s) AND id_user != %s",
             [username, id_user])
         user = cur.fetchone()
         self.conn.commit()
@@ -131,7 +131,7 @@ class UserService:
         params = []
         hasBefore = False
         if 'username' in body:
-            if self.usernameAndIDExist(body['username'], body['id_user']):
+            if self.usernameAndIdDifferentExist(body['username'], body['id_user']):
                 raise falcon.HTTPConflict('Conflict', 'Username already used')
 
             if hasBefore:
@@ -142,7 +142,7 @@ class UserService:
             sql += " username = %s "
             params.append(body['username'])
         if 'email' in body:
-            if self.emailAndIDExist(body['email'], body['id_user']):
+            if self.emailAndIdDifferentExist(body['email'], body['id_user']):
                 raise falcon.HTTPConflict('Conflict', 'Email already used')
 
             if hasBefore:

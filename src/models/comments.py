@@ -1,8 +1,8 @@
 class Comment:
 
-    def __init__(self, id_comment, id_user, id_post,
-                 id_comment_parent, text, state,
-                 date_published, date_deleted):
+    def __init__(self, id_comment=None, id_user=None, id_post=None,
+                 id_comment_parent=None, text=None, state=None,
+                 date_published=None, date_deleted=None):
         self.id_comment = id_comment
         self.id_user = id_user
         self.id_post = id_post

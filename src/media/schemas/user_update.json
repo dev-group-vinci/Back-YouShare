@@ -23,6 +23,10 @@
         "password": {
             "title": "Password",
             "type": "string"
+        },
+        "new_password": {
+            "title": "New password",
+            "type": "string"
         }
     }
 }

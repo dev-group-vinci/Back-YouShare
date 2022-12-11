@@ -58,7 +58,7 @@ paths:
         400:
           description: User in request is not correct
         401:
-          description: Missing authentication
+          description: Missing authentication or password incorrect
         200:
           description: User updated
           content:

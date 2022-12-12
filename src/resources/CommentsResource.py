@@ -7,7 +7,7 @@ from src.models.comments import Comment
 from src.services.CommentService import CommentService
 from json import dumps
 
-auth = Authenticate()
+auth = Authenticate.getInstance()
 
 
 class Comments:

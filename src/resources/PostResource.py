@@ -9,7 +9,7 @@ from src.services.PostsService import PostService
 from json import dumps
 from src.utils.json import datetime_to_iso_str
 
-auth = Authenticate()
+auth = Authenticate.getInstance()
 
 
 class Posts:

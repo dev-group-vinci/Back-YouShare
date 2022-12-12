@@ -9,7 +9,7 @@ from src.services.PostsService import PostService
 from src.services.LikesService import LikeService
 from json import dumps
 
-auth = Authenticate()
+auth = Authenticate.getInstance()
 
 
 class Likes:

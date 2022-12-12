@@ -6,7 +6,7 @@ from src.utils.Authenticate import Authenticate
 from src.services.FriendsService import FriendsService
 from src.utils import enum
 
-auth = Authenticate()
+auth = Authenticate.getInstance()
 
 
 class Friends:

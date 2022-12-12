@@ -31,6 +31,14 @@ class Posts:
         resp.body = dumps(newPost, default=datetime_to_iso_str)
 
     @falcon.before(auth, enum.ROLE_USER)
+    def on_get(self, req, resp):
+        id_user = req.context.user['id_user']
+        posts = self.postServices.readFeed(id_user)
+
+        resp.status = falcon.HTTP_200
+        resp.body = dumps(posts, default=datetime_to_iso_str)
+
+    @falcon.before(auth, enum.ROLE_USER)
     def on_get_post(self, req, resp, id_post):
         post = self.postServices.readOne(id_post)
 

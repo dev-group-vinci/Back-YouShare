@@ -2,9 +2,10 @@ import falcon
 from src.models.comments import Comment
 from src.data.db import Db
 from datetime import datetime, timezone
-from src.utils.enum import POST_DELETED, COMMENT_DELETED
 from src.utils.logging import logger
 from src.services.PostsService import PostService
+from src.utils import enum
+from src.utils.OpenAI import OpenAI
 
 
 class CommentService:
@@ -57,13 +58,18 @@ class CommentService:
         return listComment
 
     def addComment(self, commentObject):
+        if OpenAI.moderateContent(commentObject.text):
+            raise falcon.HTTPForbidden("Forbidden", "Text contains offensive language")
         cur = None
         try:
 
             post = self.postServices.readOne(commentObject.id_post)
-            if post.state == POST_DELETED:
+            if post.state == enum.POST_DELETED:
                 logger.warning("The post is actually deleted you can't comment it")
                 raise falcon.HTTPForbidden("The post is actually deleted you can't comment it")
+
+            if commentObject is not None:
+                self.readOneComment(commentObject.id_comment_parent)
 
             cur = self.conn.cursor()
 
@@ -75,7 +81,7 @@ class CommentService:
                 " date_deleted"
                 , [commentObject.id_user, commentObject.id_post,
                    commentObject.id_comment_parent, commentObject.text,
-                   commentObject.state]
+                   enum.COMMENT_PUBLISHED]
             )
 
             comment_tuple = cur.fetchone()
@@ -104,7 +110,7 @@ class CommentService:
 
             cur.execute(
                 "UPDATE youshare.comments SET state = %s, date_deleted = %s "
-                "WHERE id_post = %s ", [COMMENT_DELETED, datetime.now(timezone.utc), id_post]
+                "WHERE id_post = %s ", [enum.COMMENT_DELETED, datetime.now(timezone.utc), id_post]
             )
         except BaseException as err:
             self.conn.rollback()
@@ -132,7 +138,7 @@ class CommentService:
                 "RETURNING id_comment, id_user, id_post,"
                 " id_comment_parent, text, state, date_published,"
                 " date_deleted"
-                , [COMMENT_DELETED, datetime.now(timezone.utc), id_comment]
+                , [enum.COMMENT_DELETED, datetime.now(timezone.utc), id_comment]
             )
 
             comment_tuple = cur.fetchone()

@@ -5,11 +5,13 @@
     "properties": {
         "id_url": {
             "title": "Id of the url video",
-            "type": "string"
+            "type": "string",
+            "maxLength": 11
         },
         "text": {
             "title": "Text of the post",
-            "type": "string"
+            "type": "string",
+            "maxLength": 280
         }
     },
     "required": [

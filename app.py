@@ -28,12 +28,18 @@ if __name__ == '__main__':
     comments = Comments()
 
     api.add_route('/friends',friends)
+    api.add_route('/friends/requests',friends,suffix='requests')
+    api.add_route('/friends/self/requests',friends,suffix='self')
+    api.add_route('/friends/{id_friend}',friends,suffix='id')
+    api.add_route('/friends/{id_friend}/accept',friends,suffix='accept')
+    api.add_route('/friends/{id_friend}/refuse', friends, suffix='refuse')
 
     api.add_route('/users',users)
     api.add_route('/users/{id_user}',users,suffix='id')
     api.add_route('/users/login', users, suffix='login')
     api.add_route('/users/register', users, suffix='register')
-    api.add_route('/users/picture/{picture_name}', Users(), suffix='picture')
+    api.add_route('/users/{id_user}/picture', users, suffix='picture')
+    api.add_route('/users/self/picture', users, suffix='self_picture')
 
     api.add_route('/posts', posts)
     api.add_route('/posts/{id_post}', posts, suffix='post')

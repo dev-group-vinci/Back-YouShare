@@ -160,6 +160,11 @@ class CommentService:
             )
 
             comment_tuple = cur.fetchone()
+
+            if comment_tuple is None:
+                logger.warn('Not Found The comment is not registered yet')
+                raise falcon.HTTPNotFound('Not Found', 'The comment is not registered yet')
+
             comment = Comment.from_tuple(comment_tuple)
 
         except BaseException as err:

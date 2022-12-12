@@ -13,7 +13,7 @@ from src.utils.Authenticate import Authenticate
 from src.services.UsersService import UserService
 from src.utils import enum
 
-auth = Authenticate()
+auth = Authenticate.getInstance()
 
 class Users:
     def __init__(self):

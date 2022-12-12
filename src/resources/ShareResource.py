@@ -9,7 +9,7 @@ from src.services.PostsService import PostService
 from src.services.SharesService import ShareService
 from json import dumps
 
-auth = Authenticate()
+auth = Authenticate.getInstance()
 
 
 class Shares:

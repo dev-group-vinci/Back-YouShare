@@ -8,7 +8,8 @@ from src.services.CommentService import CommentService
 from json import dumps
 from src.media import load_schema
 from falcon.media.validators import jsonschema
-auth = Authenticate()
+
+auth = Authenticate.getInstance()
 
 
 class Comments:

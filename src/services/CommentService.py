@@ -1,7 +1,8 @@
 import falcon
 from src.models.comments import Comment
 from src.data.db import Db
-from src.utils.enum import POST_DELETED
+from datetime import datetime, timezone
+from src.utils.enum import POST_DELETED, COMMENT_DELETED
 from src.utils.logging import logger
 from src.services.PostsService import PostService
 
@@ -79,7 +80,7 @@ class CommentService:
 
             comment_tuple = cur.fetchone()
             comment = Comment.from_tuple(comment_tuple)
-            print("comment :: ", comment.text)
+
         except BaseException as err:
             self.conn.rollback()
             logger.warning(err)
@@ -88,3 +89,27 @@ class CommentService:
         self.conn.commit()
         cur.close()
         return comment
+
+    def deleteComment(self, id_post, id_ownerPost_user):
+        cur = None
+        try:
+
+            post = self.postServices.readOne(id_post)
+
+            if post.id_user != id_ownerPost_user:
+                logger.warning("You are not available to delete all comment of this post")
+                raise falcon.HTTPForbidden("Not identified as the corresponding user")
+
+            cur = self.conn.cursor()
+
+            cur.execute(
+                "UPDATE youshare.comments SET state = %s, date_deleted = %s "
+                "WHERE id_post = %s ", [COMMENT_DELETED, datetime.now(timezone.utc), id_post]
+            )
+        except BaseException as err:
+            self.conn.rollback()
+            logger.warning(err)
+            raise err
+
+        self.conn.commit()
+        cur.close()

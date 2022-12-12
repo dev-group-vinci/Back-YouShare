@@ -6,7 +6,8 @@ from src.utils.json import datetime_to_iso_str
 from src.models.comments import Comment
 from src.services.CommentService import CommentService
 from json import dumps
-
+from src.media import load_schema
+from falcon.media.validators import jsonschema
 auth = Authenticate()
 
 
@@ -45,7 +46,7 @@ class Comments:
 
         resp.status = falcon.HTTP_202
 
-
+    @jsonschema.validate(load_schema("new_comment"))
     @falcon.before(auth, enum.ROLE_USER)
     def on_delete_one(self, req, resp, id_comment):
         id_user = req.context.user['id_user']

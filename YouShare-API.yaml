@@ -258,6 +258,8 @@ paths:
       security:
         - jwtAuth : []
       responses:
+        400:
+          description: Bad ID
         401:
           description: Missing authentication
         404:
@@ -271,6 +273,8 @@ paths:
       security:
         - jwtAuth : []
       responses:
+        403:
+          description: Bad ID
         401:
           description: Missing authentication
         404:
@@ -293,6 +297,10 @@ paths:
       security:
         - jwtAuth: [ ]
       responses:
+        403:
+          description: You cannot accept a friend request when you are the asker or you cannot accept yourself as a friend
+        409:
+          description: Friend request is already accepted
         401:
           description: Missing authentication
         404:
@@ -315,6 +323,10 @@ paths:
       security:
         - jwtAuth: [ ]
       responses:
+        403:
+          description: You cannot refuse a friend request when you are the asker or you cannot refuse yourself as a friend
+        409:
+          description: Friend request is already refused
         401:
           description: Missing authentication
         404:

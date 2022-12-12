@@ -69,7 +69,7 @@ class Users:
         resp.status = falcon.HTTP_201
         resp.body = dumps(token)
 
-
+    @falcon.before(auth,enum.ROLE_USER)
     def on_get_picture(self, req, resp, id_user):
         connection_string = os.getenv("CONNECTION_STRING")
         container_name = os.getenv("CONTAINER_NAME")
@@ -85,7 +85,35 @@ class Users:
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
-        blob_client = blob_service_client.get_blob_client(container=container_name, blob="helloworld12345.png")
+        #get picture name from db
+        picture_name = self.userServices.getPicture(int(id_user)) #TODO Eliott est ce que le int() est obligatoire ?
+        #get image from azure blob
+        blob_client = blob_service_client.get_blob_client(container=container_name, blob=picture_name)
+        url = blob_client.url + "?" + sas_token
+
+        resp.status = falcon.HTTP_200
+        resp.body = dumps({'url': url})
+
+    @falcon.before(auth,enum.ROLE_USER)
+    def on_get_self_picture(self, req, resp):
+        connection_string = os.getenv("CONNECTION_STRING")
+        container_name = os.getenv("CONTAINER_NAME")
+
+        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+
+        # Create a SAS token to use to authenticate a new client
+        sas_token = generate_account_sas(
+            blob_service_client.account_name,
+            account_key=blob_service_client.credential.account_key,
+            resource_types=ResourceTypes(object=True),
+            permission=AccountSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+
+        #get picture name from db
+        picture_name = self.userServices.getPicture(int(req.context.user['id_user'])) #TODO Eliott est ce que le int() est obligatoire ?
+        #get image from azure blob
+        blob_client = blob_service_client.get_blob_client(container=container_name, blob=picture_name)
         url = blob_client.url + "?" + sas_token
 
         resp.status = falcon.HTTP_200

@@ -234,3 +234,18 @@ class UserService:
         cur.close()
 
         return user[0]
+
+    def getPicture(self, id_user):
+        cur = self.conn.cursor()
+
+        cur.execute("SELECT picture FROM youshare.users WHERE id_user = %s",
+                    [id_user])
+        picture_name = cur.fetchone()
+        #TODO eliott peut être checker des erreurs ?
+        self.conn.commit()
+        cur.close()
+
+        return picture_name[0]
+
+
+

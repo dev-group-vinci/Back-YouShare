@@ -529,6 +529,11 @@ paths:
           'application/json':
             schema:
               $ref: '#/components/schemas/newComment'
+            example:
+              id_user: 5
+              id_post: 1
+              id_comment_parent: null
+              text: Trop bien expliqué mais vidéo un peu longue !
       tags:
         - posts
       summary: Comment a post
@@ -542,7 +547,7 @@ paths:
         403:
           description: The post is deleted
         404:
-          description: Post not found
+          description: Post or comment parent not found
         201:
           description: Create a new comment for a post
           content:

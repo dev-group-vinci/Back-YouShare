@@ -68,6 +68,9 @@ class CommentService:
                 logger.warning("The post is actually deleted you can't comment it")
                 raise falcon.HTTPForbidden("The post is actually deleted you can't comment it")
 
+            if commentObject is not None:
+                self.readOneComment(commentObject.id_comment_parent)
+
             cur = self.conn.cursor()
 
             cur.execute(

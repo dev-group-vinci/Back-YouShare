@@ -26,7 +26,7 @@ class Comments:
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_post(self, req, resp):
-        id_user = req.context.user['id_user']
+        id_user = req.context.user.id_user
 
         raw_json = req.media
         comment = Comment()
@@ -41,7 +41,7 @@ class Comments:
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_delete(self, req, resp, id_post):
-        id_user = req.context.user['id_user']
+        id_user = req.context.user.id_user
 
         self.commentServices.deleteAllCommentsPost(id_post, id_user)
 
@@ -50,7 +50,7 @@ class Comments:
     @jsonschema.validate(load_schema("new_comment"))
     @falcon.before(auth, enum.ROLE_USER)
     def on_delete_one(self, req, resp, id_comment):
-        id_user = req.context.user['id_user']
+        id_user = req.context.user.id_user
 
         self.commentServices.deleteOneCommentPost(id_comment, id_user)
 

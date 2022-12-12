@@ -70,7 +70,7 @@ Content-Type: application/json
 
 {
   "biography": "Je suis heureuse",
-  "password": "zou"
+  "password": "M0tde@"
 }
 
 ### Get user by id

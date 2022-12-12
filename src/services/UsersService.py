@@ -2,6 +2,7 @@ import bcrypt
 import falcon
 from src.data.db import Db
 from src.utils import enum
+from src.models.users import Users
 
 
 class UserService:
@@ -23,22 +24,18 @@ class UserService:
 
     def getUser(self, idUser):
         cur = self.conn.cursor()
-        cur.execute("SELECT id_user, username, role, email, biography FROM youshare.users WHERE id_user=%s", [idUser])
-        user = cur.fetchone()
-        if user is None:
+        cur.execute("SELECT id_user, username, role, email, biography,picture FROM youshare.users WHERE id_user=%s", [idUser])
+        data = cur.fetchone()
+        if data is None:
             self.conn.commit
             cur.close()
             raise falcon.HTTPNotFound('Not Found', 'The user is not found')
         self.conn.commit()
         cur.close()
 
-        return {
-            "id_user": user[0],
-            "username": user[1],
-            "role": user[2],
-            "email": user[3],
-            "biography": user[4]
-        }
+        user = Users.from_tuple(data)
+
+        return user
 
     def userExist(self,id_user):
         cur = self.conn.cursor()
@@ -96,23 +93,19 @@ class UserService:
         # Verify if user exist and send 404 if not
         user = self.getUser(id_user)
 
-        if user['role'] == enum.ROLE_ADMIN:
+        if user.role == enum.ROLE_ADMIN:
             raise falcon.HTTPBadRequest("Bad Request", "User is already an admin")
 
         cur = self.conn.cursor()
         cur.execute("UPDATE youshare.users SET role = %s WHERE id_user = %s "
-                    "RETURNING id_user,username,role,email,biography", [enum.ROLE_ADMIN, id_user])
-        user = cur.fetchone()
+                    "RETURNING id_user, username, role, email, biography,picture", [enum.ROLE_ADMIN, id_user])
+        data = cur.fetchone()
         self.conn.commit()
         cur.close()
 
-        return {
-            "id_user": user[0],
-            "username": user[1],
-            "role": user[2],
-            "email": user[3],
-            "biography": user[4]
-        }
+        user = Users.from_tuple(data)
+
+        return user
 
     def verifyPassword(self,id_user,password):
 
@@ -182,23 +175,19 @@ class UserService:
             hashedPassword = hashedPassword.decode('utf-8')
             params.append(hashedPassword)
 
-        sql += " WHERE id_user = %s RETURNING id_user,username,role,email,biography "
+        sql += " WHERE id_user = %s RETURNING id_user, username, role, email, biography,picture "
         params.append(body['id_user'])
 
         cur = self.conn.cursor()
         cur.execute(sql, params)
-        newUser = cur.fetchone()
+        data = cur.fetchone()
 
         self.conn.commit()
         cur.close()
 
-        return {
-            "id_user": newUser[0],
-            "username": newUser[1],
-            "role": newUser[2],
-            "email": newUser[3],
-            "biography": newUser[4]
-        }
+        user = Users.from_tuple(data)
+
+        return user
 
     def registerUser(self, email, username, password: str):
         cur = self.conn.cursor()
@@ -217,7 +206,7 @@ class UserService:
         hashedPassword = bcrypt.hashpw(password, bcrypt.gensalt(10))
         hashedPassword = hashedPassword.decode('utf-8')
         cur.execute("INSERT INTO youshare.users(email,username,password)"
-                    " VALUES (%s,%s,%s) RETURNING id_user,username",
+                    " VALUES (%s,%s,%s) RETURNING id_user",
                     [email, username, hashedPassword])
         row = cur.fetchone()
 
@@ -228,7 +217,7 @@ class UserService:
     def login(self, username, password):
         cur = self.conn.cursor()
 
-        cur.execute("SELECT id_user,username,role,password FROM youshare.users WHERE lower(username) = lower(%s)",
+        cur.execute("SELECT id_user,password FROM youshare.users WHERE lower(username) = lower(%s)",
                     [username])
         user = cur.fetchone()
         if user is None:
@@ -236,7 +225,7 @@ class UserService:
             cur.close()
             raise falcon.HTTPNotFound('Not Found', 'The user is not registered yet')
         password = str(password).encode('utf-8')
-        hashedPassword = str(user[3]).encode('utf-8')
+        hashedPassword = str(user[1]).encode('utf-8')
         if not bcrypt.checkpw(password, hashedPassword):
             raise falcon.HTTPUnauthorized("Unauthorized", "the password is incorrect")
 

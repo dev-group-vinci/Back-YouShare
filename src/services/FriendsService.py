@@ -3,7 +3,7 @@ import falcon
 from src.data.db import Db
 from src.utils import enum
 from src.services.UsersService import UserService
-
+from src.models.friends import Friends
 
 class FriendsService:
     __instance = None
@@ -28,7 +28,7 @@ class FriendsService:
         cur = self.conn.cursor()
 
         cur.execute(
-            "SELECT us.id_user,us.username,us.email,us.biography,us.role "
+            "SELECT fr.state,us.id_user,us.username,us.role,us.email,us.biography,us.picture "
             "FROM youshare.friendships as fr, youshare.users as us "
             "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
             "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
@@ -43,14 +43,8 @@ class FriendsService:
 
         # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
         for friend in friends:
-            user = {
-                "id_user":friend[0],
-                "username":friend[1],
-                "role": friend[4],
-                "email": friend[2],
-                "biography":friend[3]
-            }
-            list.append(user)
+            user = Friends.from_tuple(friend)
+            list.append(user.__dict__)
 
         self.conn.commit()
         cur.close()
@@ -60,7 +54,7 @@ class FriendsService:
         cur = self.conn.cursor()
 
         cur.execute(
-            "SELECT us.id_user,us.username,us.email,us.biography,us.role,fr.state "
+            "SELECT fr.state,us.id_user,us.username,us.role,us.email,us.biography,us.picture "
             "FROM youshare.friendships as fr, youshare.users as us "
             "WHERE us.id_user = id_asker "
             "AND fr.id_receiver = %s "
@@ -75,15 +69,8 @@ class FriendsService:
 
         # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
         for friend in friends:
-            user = {
-                "id_user": friend[0],
-                "username": friend[1],
-                "role": friend[4],
-                "email": friend[2],
-                "biography": friend[3],
-                "state":friend[5]
-            }
-            list.append(user)
+            user = Friends.from_tuple(friend)
+            list.append(user.__dict__)
 
         self.conn.commit()
         cur.close()
@@ -93,7 +80,7 @@ class FriendsService:
         cur = self.conn.cursor()
 
         cur.execute(
-            "SELECT us.id_user,us.username,us.email,us.biography,us.role,fr.state "
+            "SELECT fr.state,us.id_user,us.username,us.role,us.email,us.biography,us.picture "
             "FROM youshare.friendships as fr, youshare.users as us "
             "WHERE us.id_user = id_receiver "
             "AND fr.id_asker = %s "
@@ -108,15 +95,8 @@ class FriendsService:
 
         # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
         for friend in friends:
-            user = {
-                "id_user": friend[0],
-                "username": friend[1],
-                "role": friend[4],
-                "email": friend[2],
-                "biography": friend[3],
-                "state":friend[5]
-            }
-            list.append(user)
+            user = Friends.from_tuple(friend)
+            list.append(user.__dict__)
 
         self.conn.commit()
         cur.close()

@@ -23,7 +23,7 @@ class Posts:
         # récupérer le json
         raw_json = req.media
 
-        id_user = req.context.user['id_user']
+        id_user = req.context.user.id_user
 
         newPost = self.postServices.createPost(id_user, raw_json['id_url'], raw_json['text'])
 
@@ -47,7 +47,7 @@ class Posts:
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_post_like(self, req, resp, id_post):
-        id_user = req.context.user['id_user']
+        id_user = req.context.user.id_user
         nb_like = self.postServices.like(id_post, id_user)
 
         resp.status = falcon.HTTP_201

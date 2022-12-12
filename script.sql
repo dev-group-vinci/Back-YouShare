@@ -9,7 +9,8 @@ create table youshare.users
     role     varchar(10)            not null default 'user' CHECK (role = 'admin' or role = 'user'),
     email    varchar(128)          not null unique ,
     password char(60)              not null,
-    biography varchar(200)         null
+    biography varchar(200)         null,
+    picture     varchar(150)         null
 
 );
 

@@ -41,6 +41,15 @@ class Comments:
     def on_delete(self, req, resp, id_post):
         id_user = req.context.user['id_user']
 
-        self.commentServices.deleteComment(id_post, id_user)
+        self.commentServices.deleteAllCommentsPost(id_post, id_user)
+
+        resp.status = falcon.HTTP_202
+
+
+    @falcon.before(auth, enum.ROLE_USER)
+    def on_delete_one(self, req, resp, id_comment):
+        id_user = req.context.user['id_user']
+
+        self.commentServices.deleteOneCommentPost(id_comment, id_user)
 
         resp.status = falcon.HTTP_202

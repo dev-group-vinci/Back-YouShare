@@ -43,6 +43,7 @@ if __name__ == '__main__':
 
     api.add_route('/posts/{id_post}/comments/', comments)
     api.add_route('/posts/comments/', comments)
+    api.add_route('/posts/comments/{id_comment}', comments, suffix='one')
 
     logger.info("Server started")
 

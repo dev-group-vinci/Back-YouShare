@@ -1,12 +1,11 @@
 import falcon
+from src.utils import enum
 from src.data.db import Db
 from datetime import datetime, timezone
 from src.utils.logging import logger
 from src.models.posts import Post
-import os
-import openai
+from src.utils.OpenAI import OpenAI
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 class PostService:
     __instance = None
@@ -25,14 +24,8 @@ class PostService:
         db = Db.getInstance()
         self.conn = db.conn
 
-    def moderateContent(self,text):
-        response = openai.Moderation.create(
-            input=text
-        )
-        return response["results"][0]["flagged"]
-
     def createPost(self, id_user, id_url, text):
-        if self.moderateContent(text):
+        if OpenAI.moderateContent(text):
             raise falcon.HTTPForbidden("Forbidden", "Text contains offensive language")
 
         cur = self.conn.cursor()
@@ -65,3 +58,47 @@ class PostService:
         cur.close()
 
         return post
+
+    def readFeed(self, id_user):
+        cur = None
+        try:
+            cur = self.conn.cursor()
+
+            cur.execute("SELECT * FROM youshare.posts WHERE id_user = %s "
+                        "OR id_post IN (SELECT id_post FROM youshare.likes WHERE id_user IN "
+                        "(SELECT us.id_user FROM youshare.friendships as fr, youshare.users as us "
+                        "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
+                        "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
+                        "AND fr.state = %s )) "
+                        "OR id_post IN (SELECT id_post FROM youshare.shares WHERE id_user IN "
+                        "(SELECT us.id_user "
+                        "FROM youshare.friendships as fr, youshare.users as us "
+                        "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
+                        "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
+                        "AND fr.state = %s )) "
+                        "OR id_post IN (SELECT id_post FROM youshare.posts WHERE id_user IN "
+                        "(SELECT us.id_user "
+                        "FROM youshare.friendships as fr, youshare.users as us "
+                        "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
+                        "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
+                        "AND fr.state = %s )); ",
+                        [id_user, id_user, id_user, id_user, enum.STATE_ACCEPTED,
+                         id_user, id_user, id_user, enum.STATE_ACCEPTED,
+                         id_user, id_user, id_user, enum.STATE_ACCEPTED]
+                        )
+
+            posts = cur.fetchall()
+            listPost = []
+
+            for post in posts:
+                p = Post.from_tuple(post)
+                listPost.append(p)
+
+        except BaseException as err:
+            self.conn.rollback()
+            logger.warning(err)
+            raise err
+
+        self.conn.commit()
+        cur.close()
+        return listPost

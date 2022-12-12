@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from src.utils.logging import logger
 from src.services.PostsService import PostService
 from src.utils import enum
+from src.utils.OpenAI import OpenAI
 
 
 class CommentService:
@@ -57,6 +58,8 @@ class CommentService:
         return listComment
 
     def addComment(self, commentObject):
+        if OpenAI.moderateContent(commentObject.text):
+            raise falcon.HTTPForbidden("Forbidden", "Text contains offensive language")
         cur = None
         try:
 

@@ -4,3 +4,4 @@ SHARE_TABLE = "shares"
 LIKE_TABLE = "likes"
 
 POST_DELETED = "deleted"
+COMMENT_DELETED = "deleted"

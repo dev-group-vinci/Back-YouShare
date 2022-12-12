@@ -3,10 +3,7 @@ from src.data.db import Db
 from datetime import datetime, timezone
 from src.utils.logging import logger
 from src.models.posts import Post
-import os
-import openai
-
-openai.api_key = os.getenv("OPENAI_API_KEY")
+from src.utils.OpenAI import OpenAI
 
 class PostService:
     __instance = None
@@ -25,14 +22,10 @@ class PostService:
         db = Db.getInstance()
         self.conn = db.conn
 
-    def moderateContent(self,text):
-        response = openai.Moderation.create(
-            input=text
-        )
-        return response["results"][0]["flagged"]
+
 
     def createPost(self, id_user, id_url, text):
-        if self.moderateContent(text):
+        if OpenAI.moderateContent(text):
             raise falcon.HTTPForbidden("Forbidden", "Text contains offensive language")
 
         cur = self.conn.cursor()

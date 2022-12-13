@@ -64,5 +64,5 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             pass
         logger.info("Server closed")
-        database.close()
+        database.freeConnexion()
         httpd.server_close()

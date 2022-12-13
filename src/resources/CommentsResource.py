@@ -24,6 +24,7 @@ class Comments:
         resp.status = falcon.HTTP_200
         resp.body = dumps(comments, default=datetime_to_iso_str)
 
+    @jsonschema.validate(load_schema("new_comments"))
     @falcon.before(auth, enum.ROLE_USER)
     def on_post(self, req, resp):
         id_user = req.context.user.id_user
@@ -37,6 +38,7 @@ class Comments:
 
         if comment.id_comment_parent == -1:
             comment.id_comment_parent = None
+
         comment = self.commentServices.addComment(comment)
         comment.text = html.unescape(comment.text)
         resp.status = falcon.HTTP_201

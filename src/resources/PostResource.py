@@ -3,6 +3,7 @@ import json
 import falcon
 from falcon.media.validators import jsonschema
 from src.media import load_schema
+from src.models.posts import Post
 from src.utils.Authenticate import Authenticate
 from src.utils import enum
 from src.services.PostsService import PostService
@@ -24,15 +25,16 @@ class Posts:
         raw_json = req.media
 
         id_user = req.context.user.id_user
-
-        newPost = self.postServices.createPost(id_user, raw_json['id_url'], raw_json['text'])
+        post = Post().create_new_post_from_json(raw_json)
+        post.id_user = id_user
+        newPost = self.postServices.createPost(post)
 
         resp.status = falcon.HTTP_201
         resp.body = dumps(newPost, default=datetime_to_iso_str)
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_get(self, req, resp):
-        id_user = req.context.user['id_user']
+        id_user = req.context.user.id_user
         posts = self.postServices.readFeed(id_user)
 
         resp.status = falcon.HTTP_200

@@ -1,10 +1,10 @@
 import falcon
 from src.utils import enum
 from src.data.db import Db
-from datetime import datetime, timezone
-from src.utils.logging import logger
 from src.models.posts import Post
 from src.utils.OpenAI import OpenAI
+from src.utils.logging import logger
+from datetime import datetime, timezone
 
 
 class PostService:

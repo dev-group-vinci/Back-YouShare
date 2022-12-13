@@ -1,6 +1,6 @@
+from src.utils import enum
 from src.services.PostsService import PostService
 from src.services.AbstractService import AbstractService
-from src.utils import enum
 
 class ShareService:
     __instance = None

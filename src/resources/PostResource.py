@@ -8,6 +8,7 @@ from src.utils import enum
 from src.services.PostsService import PostService
 from json import dumps
 from src.utils.json import datetime_to_iso_str
+from src.utils.json import parseList, parseElement
 
 auth = Authenticate.getInstance()
 
@@ -32,11 +33,8 @@ class Posts:
 
         newPost = self.postServices.createPost(post)
 
-        post.id_url = html.unescape(post.id_url)
-        post.text = html.unescape(post.text)
-
         resp.status = falcon.HTTP_201
-        resp.body = dumps(newPost, default=datetime_to_iso_str)
+        resp.body = dumps(parseElement(newPost), default=datetime_to_iso_str)
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_get(self, req, resp):
@@ -44,7 +42,7 @@ class Posts:
         posts = self.postServices.readFeed(id_user)
 
         resp.status = falcon.HTTP_200
-        resp.body = dumps(posts, default=datetime_to_iso_str)
+        resp.body = dumps(parseList(posts), default=datetime_to_iso_str)
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_get_me(self, req, resp):
@@ -52,14 +50,14 @@ class Posts:
         posts = self.postServices.readMyPosts(id_user)
 
         resp.status = falcon.HTTP_200
-        resp.body = dumps(posts, default=datetime_to_iso_str)
+        resp.body = dumps(parseList(posts), default=datetime_to_iso_str)
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_get_post(self, req, resp, id_post):
         post = self.postServices.readOne(id_post)
 
         resp.status = falcon.HTTP_200
-        resp.body = dumps(post, default=datetime_to_iso_str)
+        resp.body = dumps(parseElement(post), default=datetime_to_iso_str)
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_post_like(self, req, resp, id_post):

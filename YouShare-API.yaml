@@ -530,7 +530,6 @@ paths:
             schema:
               $ref: '#/components/schemas/newComment'
             example:
-              id_user: 5
               id_post: 1
               id_comment_parent: null
               text: Trop bien expliqué mais vidéo un peu longue !

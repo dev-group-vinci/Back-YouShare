@@ -737,16 +737,10 @@ components:
       properties:
         id_url:
           type: string
-        state:
-          type: string
-          enum:
-            - published
-            - deleted
         text:
           type: string
       example:
         id_url: TaAM5MovXp0
-        state: published
         text: Merci Jamy !
     newUser:
       type: object

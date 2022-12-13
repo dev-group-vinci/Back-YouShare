@@ -1,3 +1,4 @@
+import html
 class Post:
 
     def __init__(self, id_post=None, id_user=None, id_url=None,
@@ -18,4 +19,11 @@ class Post:
     def create_new_post_from_json(self, json):
         self.id_url = json['id_url']
         self.text = json['text']
+        return self
+
+    def unescape(self):
+        if self.text is not None:
+            self.text = html.unescape(self.text)
+        if self.id_url is not None:
+            self.id_url = html.unescape(self.id_url)
         return self

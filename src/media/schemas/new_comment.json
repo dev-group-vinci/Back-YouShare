@@ -5,11 +5,11 @@
     "properties": {
         "id_post": {
             "title": "Id of the post",
-            "type": "int"
+            "type": "integer"
         },
         "id_comment_parent": {
             "title": "Id of the post",
-            "type": "int"
+            "type": ["integer", "null"]
         },
         "text": {
             "type": "string",
@@ -17,7 +17,6 @@
         }
     },
     "required": [
-        "id_user",
         "id_post",
         "text"
     ]

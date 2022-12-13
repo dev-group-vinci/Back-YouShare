@@ -1,3 +1,6 @@
+import html
+
+
 class Comment:
 
     def __init__(self, id_comment=None, id_user=None, id_post=None,
@@ -21,4 +24,9 @@ class Comment:
         if 'id_comment_parent' in json:
             self.id_comment_parent = json['id_comment_parent']
         self.text = json['text']
+        return self
+
+    def unescape(self):
+        if self.text is not None:
+            self.text = html.unescape(self.text)
         return self

@@ -50,11 +50,10 @@ class Comments:
 
         resp.status = falcon.HTTP_202
 
-    @jsonschema.validate(load_schema("new_comment"))
     @falcon.before(auth, enum.ROLE_USER)
-    def on_delete_one(self, req, resp, id_comment):
+    def on_delete_one(self, req, resp, id_post, id_comment):
         id_user = req.context.user.id_user
 
-        self.commentServices.deleteOneCommentPost(id_comment, id_user)
+        self.commentServices.deleteOneCommentPost(id_post, id_comment, id_user)
 
         resp.status = falcon.HTTP_202

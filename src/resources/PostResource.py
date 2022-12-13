@@ -1,5 +1,4 @@
-import json
-
+import html
 import falcon
 from falcon.media.validators import jsonschema
 from src.media import load_schema
@@ -26,7 +25,11 @@ class Posts:
 
         id_user = req.context.user.id_user
         post = Post().create_new_post_from_json(raw_json)
+
         post.id_user = id_user
+        post.id_url = html.escape(post.id_url)
+        post.text = html.escape(post.text)
+
         newPost = self.postServices.createPost(post)
 
         resp.status = falcon.HTTP_201

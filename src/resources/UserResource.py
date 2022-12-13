@@ -15,7 +15,7 @@ from src.utils.json import parseList,parseElement
 auth = Authenticate.getInstance()
 
 
-class UserServices:
+class UserRessource:
     def __init__(self):
         self.userServices = UserService.getInstance()
 

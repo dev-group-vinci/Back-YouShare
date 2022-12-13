@@ -3,7 +3,7 @@ import falcon
 from src.middleware import logging
 from src.resources.PostResource import Posts
 from src.resources.FriendsResource import Friends
-from src.resources.UserRoutes import UserServices
+from src.resources.UserResource import UserRessource
 from src.resources.LikeResource import Likes
 from src.resources.ShareResource import Shares
 from src.resources.CommentsResource import Comments
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     database = Db().getInstance()
     database.connect()
 
-    users = UserServices()
+    users = UserRessource()
     posts = Posts()
     likes = Likes()
     shares = Shares()

@@ -63,6 +63,7 @@ class PostService:
 
     def readMyPosts(self, id_user):
         cur = None
+        conn = None
         try:
             conn = self.db.getConnection()
             cur = conn.cursor()
@@ -93,6 +94,7 @@ class PostService:
 
     def readFeed(self, id_user):
         cur = None
+        conn = None
         try:
             conn = self.db.getConnection()
             cur = conn.cursor()

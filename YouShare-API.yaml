@@ -185,7 +185,34 @@ paths:
                     type: string
               example:
                 token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjcwNjE1MTY2LCJleHAiOjE2NzA2OTc5NjYuNDk1NzQ5fQ.YVC3Q70i05cjXvkf60wkvN7HAEQJCJQymGN4jfBrmSc
-
+  /users/search/{username}:
+    get:
+      parameters:
+        - name: username
+          description: username of the user searched
+          in: path
+          schema:
+            type: string
+            example: ehd
+          required: true
+      tags:
+        - users
+      summary: Search users
+      security:
+        - jwtAuth : [ ]
+      responses:
+        200:
+          description: the user or all the users retrieved
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+        404:
+          description: No user found
+        401:
+          description: Missing authentication
   /friends:
     get:
       summary: Get all friends

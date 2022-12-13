@@ -617,6 +617,32 @@ paths:
           content:
             'text/plain':
               example: true
+  /posts/comments/{id_comment}:
+    parameters:
+      - name: id_comment
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: Id of the comment
+    get:
+      tags:
+        - posts
+      summary: retrieve a specific comment
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Comment not found
+        200:
+          description: Sent comment information
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/comment'
   /posts/comments/:
     post:
       requestBody:

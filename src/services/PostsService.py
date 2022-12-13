@@ -44,8 +44,8 @@ class PostService:
     def readOne(self, id_post):
         cur = self.conn.cursor()
 
-        cur.execute("SELECT id_post,id_user,id_url,state,text,date_published,date_deleted"
-                    " FROM youshare.posts WHERE id_post = %s", [id_post])
+        cur.execute("SELECT id_post,id_user,id_url,state,date_published,date_deleted, text "
+                    "FROM youshare.posts WHERE id_post = %s", [id_post])
 
         post_tuple = cur.fetchone()
 
@@ -64,7 +64,7 @@ class PostService:
         try:
             cur = self.conn.cursor()
 
-            cur.execute("SELECT * FROM youshare.posts WHERE id_user = %s "
+            cur.execute("SELECT id_post,id_user,id_url,state,date_published,date_deleted, text FROM youshare.posts WHERE id_user = %s "
                         "OR id_post IN (SELECT id_post FROM youshare.likes WHERE id_user IN "
                         "(SELECT us.id_user FROM youshare.friendships as fr, youshare.users as us "
                         "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "

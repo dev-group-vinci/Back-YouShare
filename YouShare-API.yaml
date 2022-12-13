@@ -404,6 +404,24 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/post'
+  /posts/me:
+    get:
+      tags:
+        - posts
+      summary: retrieves the current user's posts
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        200:
+          description: Sent posts information
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/post'
   /posts/{id_post}:
     parameters:
       - name: id_post

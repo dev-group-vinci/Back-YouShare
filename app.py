@@ -17,7 +17,7 @@ if __name__ == '__main__':
     ])
 
     # database connection
-    database = Db()
+    database = Db().getInstance()
     database.connect()
 
     users = UserServices()
@@ -43,6 +43,7 @@ if __name__ == '__main__':
     api.add_route('/users/search/{username}',users,suffix='search')
 
     api.add_route('/posts', posts)
+    api.add_route('/posts/me', posts, suffix='me')
     api.add_route('/posts/{id_post}', posts, suffix='post')
 
     api.add_route('/posts/{id_post}/likes', likes)
@@ -50,7 +51,7 @@ if __name__ == '__main__':
 
     api.add_route('/posts/{id_post}/comments/', comments)
     api.add_route('/posts/comments/', comments)
-    api.add_route('/posts/comments/{id_comment}', comments, suffix='one')
+    api.add_route('/posts/{id_post}/comments/{id_comment}', comments, suffix='one')
 
     logger.info("Server started")
 

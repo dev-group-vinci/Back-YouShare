@@ -32,6 +32,9 @@ class Posts:
 
         newPost = self.postServices.createPost(post)
 
+        post.id_url = html.unescape(post.id_url)
+        post.text = html.unescape(post.text)
+
         resp.status = falcon.HTTP_201
         resp.body = dumps(newPost, default=datetime_to_iso_str)
 

@@ -3,7 +3,7 @@ import falcon
 from src.middleware import logging
 from src.resources.PostResource import Posts
 from src.resources.FriendsResource import Friends
-from src.resources.UserRoutes import Users
+from src.resources.UserRoutes import UserServices
 from src.resources.LikeResource import Likes
 from src.resources.ShareResource import Shares
 from src.resources.CommentsResource import Comments
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     database = Db()
     database.connect()
 
-    users = Users()
+    users = UserServices()
     posts = Posts()
     likes = Likes()
     shares = Shares()
@@ -49,6 +49,7 @@ if __name__ == '__main__':
 
     api.add_route('/posts/{id_post}/comments/', comments)
     api.add_route('/posts/comments/', comments)
+    api.add_route('/posts/comments/{id_comment}', comments, suffix='one')
 
     logger.info("Server started")
 

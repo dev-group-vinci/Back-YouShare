@@ -4,8 +4,8 @@ POST http://localhost:8989/users/login
 Content-Type: application/json
 
 {
-  "username" : "rayan",
-  "password" : "M0tde@"
+  "username" : "eliott",
+  "password" : "123"
 }
 
 > {%
@@ -20,8 +20,13 @@ Authorization: {{token}}
 
 {
   "id_url": "TaAM5MovXp0",
-  "text" : "Aujourd'hui je mange des pommes avec Jamy"
+  "text" : "Salut ça va ?"
 }
+
+
+### Get feed
+GET http://localhost:8989/posts
+Authorization: {{token}}
 
 ### Get a post
 GET http://localhost:8989/posts/300

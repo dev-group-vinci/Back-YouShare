@@ -9,7 +9,7 @@ from src.services.PostsService import PostService
 from src.services.SharesService import ShareService
 from json import dumps
 
-auth = Authenticate()
+auth = Authenticate.getInstance()
 
 
 class Shares:
@@ -19,7 +19,7 @@ class Shares:
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_post(self, req, resp, id_post):
-        id_user = req.context.user['id_user']
+        id_user = req.context.user.id_user
         nb_share = self.shareServices.share(id_post, id_user)
 
         resp.status = falcon.HTTP_201
@@ -34,7 +34,7 @@ class Shares:
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_delete(self, req, resp, id_post):
-        id_user = req.context.user['id_user']
+        id_user = req.context.user.id_user
         nb_share = self.shareServices.unshare(id_post, id_user)
 
         resp.status = falcon.HTTP_201

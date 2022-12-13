@@ -39,6 +39,10 @@ Content-Type: application/json
   "password" : "M0tde@"
 }
 
+> {%
+client.global.set("token", response.body.token);
+%}
+
 ### Login
 
 POST http://localhost:8989/users/login
@@ -66,8 +70,7 @@ Content-Type: application/json
 
 {
   "biography": "Je suis heureuse",
-  "new_password": "zoe",
-  "password": "zou"
+  "password": "M0tde@"
 }
 
 ### Get user by id

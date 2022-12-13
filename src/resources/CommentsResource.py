@@ -6,8 +6,10 @@ from src.utils.json import datetime_to_iso_str
 from src.models.comments import Comment
 from src.services.CommentService import CommentService
 from json import dumps
+from src.media import load_schema
+from falcon.media.validators import jsonschema
 
-auth = Authenticate()
+auth = Authenticate.getInstance()
 
 
 class Comments:
@@ -24,7 +26,7 @@ class Comments:
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_post(self, req, resp):
-        id_user = req.context.user['id_user']
+        id_user = req.context.user.id_user
 
         raw_json = req.media
         comment = Comment()
@@ -36,3 +38,20 @@ class Comments:
 
         resp.status = falcon.HTTP_201
         resp.body = dumps(comment, default=datetime_to_iso_str)
+
+    @falcon.before(auth, enum.ROLE_USER)
+    def on_delete(self, req, resp, id_post):
+        id_user = req.context.user.id_user
+
+        self.commentServices.deleteAllCommentsPost(id_post, id_user)
+
+        resp.status = falcon.HTTP_202
+
+    @jsonschema.validate(load_schema("new_comment"))
+    @falcon.before(auth, enum.ROLE_USER)
+    def on_delete_one(self, req, resp, id_comment):
+        id_user = req.context.user.id_user
+
+        self.commentServices.deleteOneCommentPost(id_comment, id_user)
+
+        resp.status = falcon.HTTP_202

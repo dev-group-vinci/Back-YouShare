@@ -9,7 +9,7 @@ from src.services.PostsService import PostService
 from src.services.LikesService import LikeService
 from json import dumps
 
-auth = Authenticate()
+auth = Authenticate.getInstance()
 
 
 class Likes:
@@ -19,7 +19,7 @@ class Likes:
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_post(self, req, resp, id_post):
-        id_user = req.context.user['id_user']
+        id_user = req.context.user.id_user
         nb_like = self.likeServices.like(id_post, id_user)
 
         resp.status = falcon.HTTP_201
@@ -34,7 +34,7 @@ class Likes:
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_delete(self, req, resp, id_post):
-        id_user = req.context.user['id_user']
+        id_user = req.context.user.id_user
         nb_like = self.likeServices.unlike(id_post, id_user)
 
         resp.status = falcon.HTTP_201

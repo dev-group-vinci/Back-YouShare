@@ -2,10 +2,8 @@
 import os
 from datetime import datetime, timedelta
 import uuid
-
 import falcon
 from json import dumps
-
 from azure.storage.blob import BlobServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
 from falcon.media.validators import jsonschema
 from src.media import load_schema
@@ -13,39 +11,40 @@ from src.utils.Authenticate import Authenticate
 from src.services.UsersService import UserService
 from src.utils import enum
 
-auth = Authenticate()
+auth = Authenticate.getInstance()
 
-class Users:
+class UserServices:
     def __init__(self):
         self.userServices = UserService.getInstance()
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_get(self,req,resp):
         resp.status = falcon.HTTP_200
-        resp.body = dumps(req.context.user)
+
+        resp.body = dumps(req.context.user.__dict__)
 
     @jsonschema.validate(load_schema('user_update'))
     @falcon.before(auth,enum.ROLE_USER)
     def on_put(self,req,resp):
         raw_json = req.media
 
-        raw_json['id_user'] = req.context.user['id_user']
+        raw_json['id_user'] = req.context.user.id_user
         userUpdated = self.userServices.updateUser(raw_json)
 
         resp.status = falcon.HTTP_200
-        resp.body = dumps(userUpdated)
+        resp.body = dumps(userUpdated.__dict__)
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_get_id(self,req,resp,id_user):
         user = self.userServices.getUser(id_user)
         resp.status = falcon.HTTP_200
-        resp.body = dumps(user)
+        resp.body = dumps(user.__dict__)
 
     @falcon.before(auth,enum.ROLE_ADMIN)
     def on_put_id(self,req,resp,id_user):
         user = self.userServices.grantAdmin(id_user)
         resp.status = falcon.HTTP_200
-        resp.body = dumps(user)
+        resp.body = dumps(user.__dict__)
 
 
     @jsonschema.validate(load_schema('user_login'))
@@ -113,7 +112,7 @@ class Users:
         )
 
         #get picture name from db
-        picture_name = self.userServices.getPicture(req.context.user['id_user'])
+        picture_name = self.userServices.getPicture(req.context.user.id_user)
         #get image from azure blob
         blob_client = blob_service_client.get_blob_client(container=container_name, blob=picture_name)
         url = blob_client.url + "?" + sas_token

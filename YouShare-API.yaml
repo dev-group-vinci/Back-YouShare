@@ -340,7 +340,7 @@ paths:
         - posts
       summary: retrieve the news feed
       security:
-        - jwtAuth: []
+        - jwtAuth: [ ]
       responses:
         401:
           description: Missing authentication
@@ -521,8 +521,39 @@ paths:
           content:
             'text/plain':
               example: 9
-
-
+  /posts/comments/:
+    post:
+      requestBody:
+        description: information about the comment
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/newComment'
+            example:
+              id_user: 5
+              id_post: 1
+              id_comment_parent: null
+              text: Trop bien expliqué mais vidéo un peu longue !
+      tags:
+        - posts
+      summary: Comment a post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        400:
+          description: Comment in request is not correct
+        401:
+          description: Missing authentication
+        403:
+          description: The post is deleted
+        404:
+          description: Post or comment parent not found
+        201:
+          description: Create a new comment for a post
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/comment'
   /posts/{id_post}/comments/:
     parameters:
       - name: id_post
@@ -551,31 +582,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/comment'
-    post:
-      requestBody:
-        description: information about the comment
-        content:
-          'application/json':
-            schema:
-              $ref: '#/components/schemas/newComment'
-      tags:
-        - posts
-      summary: Comment a post
-      security:
-        - jwtAuth: [ ]
-      responses:
-        400:
-          description: Comment in request is not correct
-        401:
-          description: Missing authentication
-        404:
-          description: Post not found
-        201:
-          description: Create a new comment for a post
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/comment'
     delete:
       tags:
         - posts
@@ -664,7 +670,7 @@ components:
       example:
         id_user: 5
         id_post: 1
-        id_comment_parent: -1
+        id_comment_parent: null
         state: published
         text: Trop bien expliqué mais vidéo un peu longue !
     comment:
@@ -695,7 +701,7 @@ components:
         id_comment: 1
         id_user: 5
         id_post: 1
-        id_comment_parent: -1
+        id_comment_parent: null
         state: published
         text: Trop bien expliqué mais vidéo un peu longue !
         date_published: 2022-10-24 10:45:00

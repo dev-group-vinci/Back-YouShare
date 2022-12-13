@@ -20,12 +20,28 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "id_post": 1,
+  "id_post": 6,
   "id_comment_parent": -1,
   "state": "published",
   "text": "Trop bien expliqué mais vidéo un peu longue !"
 }
 
 ### Get comments of a post
-GET http://localhost:8989/posts/1/comments/
+GET http://localhost:8989/posts/6/comments/
+Authorization: {{token}}
+
+
+### Delete all comments of a post
+
+DELETE http://localhost:8989/posts/6/comments/
+Content-Type: application/json
+Authorization: {{token}}
+
+
+### Delete a comment of a post
+
+### Delete all comments of a post
+
+DELETE http://localhost:8989/posts/comments/21
+Content-Type: application/json
 Authorization: {{token}}

@@ -9,9 +9,19 @@ from src.services.UsersService import UserService
 
 
 class Authenticate(object):
+    __instance = None
 
-    def __int__(self):
-        pass
+    @staticmethod
+    def getInstance():
+        if Authenticate.__instance is None:
+            Authenticate()
+        return Authenticate.__instance
+
+    def __init__(self):
+        if Authenticate.__instance is not None:
+            raise Exception("Authenticate instance already exist !!")
+        else:
+            Authenticate.__instance = self
 
     def encode(self, id_user):
         now = datetime.utcnow()
@@ -55,7 +65,7 @@ class Authenticate(object):
         userService = UserService.getInstance()
         user = userService.getUser(decodedToken['id'])
 
-        if user['role'] != role and user['role'] == enum.ROLE_USER:
+        if user.role != role and user.role == enum.ROLE_USER:
             logger.warning("Unauthorized access")
             raise falcon.HTTPNotAcceptable('Not Acceptable', 'Not authenticated as an admin ')
 

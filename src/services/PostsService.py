@@ -24,15 +24,15 @@ class PostService:
         db = Db.getInstance()
         self.conn = db.conn
 
-    def createPost(self, id_user, id_url, text):
-        if OpenAI.moderateContent(text):
+    def createPost(self, postObject):
+        if OpenAI.moderateContent(postObject.text):
             raise falcon.HTTPForbidden("Forbidden", "Text contains offensive language")
 
         cur = self.conn.cursor()
 
         cur.execute("INSERT INTO youshare.posts(id_user, id_url,text,date_published)"
-                    " VALUES (%s,%s,%s,%s) RETURNING id_post,id_user,id_url,state,date_published,text",
-                    [id_user, id_url, text, datetime.now(timezone.utc)])
+                    " VALUES (%s,%s,%s,%s) RETURNING id_post,id_user,id_url,state,date_published,date_deleted, text",
+                    [postObject.id_user, postObject.id_url, postObject.text, datetime.now(timezone.utc)])
 
         post_tuple = cur.fetchone()
         post = Post.from_tuple(post_tuple)

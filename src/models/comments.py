@@ -20,6 +20,5 @@ class Comment:
         self.id_post = json['id_post']
         if 'id_comment_parent' in json:
             self.id_comment_parent = json['id_comment_parent']
-        self.state = json['state']
         self.text = json['text']
         return self

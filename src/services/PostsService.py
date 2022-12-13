@@ -21,14 +21,14 @@ class PostService:
             raise Exception("UserService instance already exist !!")
         else:
             PostService.__instance = self
-        db = Db.getInstance()
-        self.conn = db.conn
+        self.db = Db.getInstance()
 
     def createPost(self, postObject):
         if OpenAI.moderateContent(postObject.text):
             raise falcon.HTTPForbidden("Forbidden", "Text contains offensive language")
 
-        cur = self.conn.cursor()
+        conn = self.db.getConnection()
+        cur = conn.cursor()
 
         cur.execute("INSERT INTO youshare.posts(id_user, id_url,text,date_published)"
                     " VALUES (%s,%s,%s,%s) RETURNING id_post,id_user,id_url,state,date_published,date_deleted, text",
@@ -37,12 +37,14 @@ class PostService:
         post_tuple = cur.fetchone()
         post = Post.from_tuple(post_tuple)
 
-        self.conn.commit()
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
         return post
 
     def readOne(self, id_post):
-        cur = self.conn.cursor()
+        conn = self.db.getConnection()
+        cur = conn.cursor()
 
         cur.execute("SELECT id_post,id_user,id_url,state,date_published,date_deleted, text "
                     "FROM youshare.posts WHERE id_post = %s", [id_post])
@@ -54,15 +56,17 @@ class PostService:
             raise falcon.HTTPNotFound('Not Found', 'The post is not registered yet')
 
         post = Post.from_tuple(post_tuple)
-        self.conn.commit()
+        conn.commit()
         cur.close()
-
+        self.db.freeConnexion()
         return post
 
     def readMyPosts(self, id_user):
         cur = None
+        conn = None
         try:
-            cur = self.conn.cursor()
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
             cur.execute(
                 "SELECT id_post,id_user,id_url,state,date_published,date_deleted, text "
@@ -79,18 +83,21 @@ class PostService:
                 listPost.append(p)
 
         except BaseException as err:
-            self.conn.rollback()
+            conn.rollback()
             logger.warning(err)
             raise err
 
-        self.conn.commit()
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
         return listPost
 
     def readFeed(self, id_user):
         cur = None
+        conn = None
         try:
-            cur = self.conn.cursor()
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
             cur.execute(
                 "SELECT id_post,id_user,id_url,state,date_published,date_deleted, text FROM youshare.posts WHERE id_user = %s "
@@ -125,10 +132,11 @@ class PostService:
                 listPost.append(p)
 
         except BaseException as err:
-            self.conn.rollback()
+            conn.rollback()
             logger.warning(err)
             raise err
 
-        self.conn.commit()
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
         return listPost

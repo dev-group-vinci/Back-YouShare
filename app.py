@@ -17,7 +17,7 @@ if __name__ == '__main__':
     ])
 
     # database connection
-    database = Db()
+    database = Db().getInstance()
     database.connect()
 
     users = UserServices()

@@ -22,17 +22,19 @@ class CommentService:
             raise Exception("UserService instance already exist !!")
         else:
             CommentService.__instance = self
-        db = Db.getInstance()
+        self.db = Db.getInstance()
         self.postServices = PostService.getInstance()
-        self.conn = db.conn
 
     def readCommentsPost(self, id_post):
         cur = None
+        conn = None
+
+        self.postServices.readOne(id_post)
+
         try:
 
-            self.postServices.readOne(id_post)
-
-            cur = self.conn.cursor()
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
             cur.execute(
                 "SELECT c.id_comment, c.id_user, c.id_post,"
@@ -49,29 +51,38 @@ class CommentService:
                 listComment.append(c)
 
         except BaseException as err:
-            self.conn.rollback()
+            conn.rollback()
             logger.warning(err)
             raise err
 
-        self.conn.commit()
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
         return listComment
 
     def addComment(self, commentObject):
+        cur = None
+        conn = None
+
         if OpenAI.moderateContent(commentObject.text):
             raise falcon.HTTPForbidden("Forbidden", "Text contains offensive language")
-        cur = None
+
+        post = self.postServices.readOne(commentObject.id_post)
+        if post.state == enum.POST_DELETED:
+            logger.warning("The post is actually deleted you can't comment it")
+            raise falcon.HTTPForbidden("The post is actually deleted you can't comment it")
+
+        if commentObject is not None:
+            try:
+                self.readOneComment(commentObject.id_comment_parent)
+            except BaseException as error:
+                logger.info("No comment parent found")
+                pass
+
         try:
 
-            post = self.postServices.readOne(commentObject.id_post)
-            if post.state == enum.POST_DELETED:
-                logger.warning("The post is actually deleted you can't comment it")
-                raise falcon.HTTPForbidden("The post is actually deleted you can't comment it")
-
-            if commentObject is not None:
-                self.readOneComment(commentObject.id_comment_parent)
-
-            cur = self.conn.cursor()
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
             cur.execute(
                 "INSERT INTO youshare.comments (id_user, id_post,"
@@ -88,49 +99,59 @@ class CommentService:
             comment = Comment.from_tuple(comment_tuple)
 
         except BaseException as err:
-            self.conn.rollback()
+            conn.rollback()
             logger.warning(err)
             raise err
 
-        self.conn.commit()
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
         return comment
 
     def deleteAllCommentsPost(self, id_post, id_ownerPost_user):
         cur = None
+        conn = None
+
+        post = self.postServices.readOne(id_post)
+
+        if post.id_user != id_ownerPost_user:
+            logger.warning("You are not available to delete all comment of this post")
+            raise falcon.HTTPForbidden("Not identified as the corresponding user")
+
         try:
 
-            post = self.postServices.readOne(id_post)
-
-            if post.id_user != id_ownerPost_user:
-                logger.warning("You are not available to delete all comment of this post")
-                raise falcon.HTTPForbidden("Not identified as the corresponding user")
-
-            cur = self.conn.cursor()
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
             cur.execute(
                 "UPDATE youshare.comments SET state = %s, date_deleted = %s "
                 "WHERE id_post = %s ", [enum.COMMENT_DELETED, datetime.now(timezone.utc), id_post]
             )
+
         except BaseException as err:
-            self.conn.rollback()
+            conn.rollback()
             logger.warning(err)
             raise err
 
-        self.conn.commit()
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
 
     def deleteOneCommentPost(self, id_post, id_comment, id_ownerPost_user):
         cur = None
+        conn = None
+
+        self.postServices.readOne(id_post)
+        comment = self.readOneComment(id_comment)
+
+        if comment.id_user != id_ownerPost_user:
+            logger.warning("You are not available to delete this comment ")
+            raise falcon.HTTPForbidden("Not identified as the corresponding user")
+
         try:
-            self.postServices.readOne(id_post)
-            comment = self.readOneComment(id_comment)
 
-            if comment.id_user != id_ownerPost_user:
-                logger.warning("You are not available to delete this comment ")
-                raise falcon.HTTPForbidden("Not identified as the corresponding user")
-
-            cur = self.conn.cursor()
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
             cur.execute(
                 "UPDATE youshare.comments SET state = %s, date_deleted = %s "
@@ -144,20 +165,21 @@ class CommentService:
             comment_tuple = cur.fetchone()
             comment = Comment.from_tuple(comment_tuple)
         except BaseException as err:
-            self.conn.rollback()
+            conn.rollback()
             logger.warning(err)
             raise err
 
-        self.conn.commit()
+        conn.commit()
         cur.close()
-
+        self.db.freeConnexion()
         return comment
 
     def readOneComment(self, id_comment):
         cur = None
+        conn = None
         try:
-
-            cur = self.conn.cursor()
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
             cur.execute(
                 " SELECT *"
@@ -174,11 +196,11 @@ class CommentService:
             comment = Comment.from_tuple(comment_tuple)
 
         except BaseException as err:
-            self.conn.rollback()
+            conn.rollback()
             logger.warning(err)
             raise err
 
-        self.conn.commit()
+        conn.commit()
         cur.close()
-
+        self.db.freeConnexion()
         return comment

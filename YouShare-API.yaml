@@ -189,7 +189,7 @@ paths:
     get:
       parameters:
         - name: username
-          description: username of the user searched
+          description: the username
           in: path
           schema:
             type: string
@@ -197,7 +197,7 @@ paths:
           required: true
       tags:
         - users
-      summary: Search users
+      summary: Get users like username
       security:
         - jwtAuth : [ ]
       responses:

@@ -28,3 +28,6 @@ class ShareService:
     def readNbShare(self, id_post):
         return self.abstractService.readNbItem(enum.SHARE_TABLE, id_post)
 
+    def isShared(self, id_post, id_user):
+        return self.abstractService.isAlreadyPresent(enum.SHARE_TABLE, id_post, id_user)
+

@@ -49,7 +49,7 @@ class FriendsService:
             # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
             for friend in friends:
                 user = Friends.from_tuple(friend)
-                list.append(user.__dict__)
+                list.append(user)
         except BaseException as err:
             conn.rollback()
             logger.warning(err)
@@ -85,7 +85,7 @@ class FriendsService:
             # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
             for friend in friends:
                 user = Friends.from_tuple(friend)
-                list.append(user.__dict__)
+                list.append(user)
         except BaseException as err:
             conn.rollback()
             logger.warning(err)
@@ -121,7 +121,7 @@ class FriendsService:
             # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
             for friend in friends:
                 user = Friends.from_tuple(friend)
-                list.append(user.__dict__)
+                list.append(user)
         except BaseException as err:
             conn.rollback()
             logger.warning(err)

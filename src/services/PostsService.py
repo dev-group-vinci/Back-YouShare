@@ -24,18 +24,28 @@ class PostService:
         self.db = Db.getInstance()
 
     def createPost(self, postObject):
+
         if OpenAI.moderateContent(postObject.text):
             raise falcon.HTTPForbidden("Forbidden", "Text contains offensive language")
 
-        conn = self.db.getConnection()
-        cur = conn.cursor()
+        cur = None
+        conn = None
+        try:
 
-        cur.execute("INSERT INTO youshare.posts(id_user, id_url,text,date_published)"
-                    " VALUES (%s,%s,%s,%s) RETURNING id_post,id_user,id_url,state,date_published,date_deleted, text",
-                    [postObject.id_user, postObject.id_url, postObject.text, datetime.now(timezone.utc)])
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
-        post_tuple = cur.fetchone()
-        post = Post.from_tuple(post_tuple)
+            cur.execute("INSERT INTO youshare.posts(id_user, id_url,text,date_published)"
+                        " VALUES (%s,%s,%s,%s) RETURNING id_post,id_user,id_url,state,date_published,date_deleted, text",
+                        [postObject.id_user, postObject.id_url, postObject.text, datetime.now(timezone.utc)])
+
+            post_tuple = cur.fetchone()
+            post = Post.from_tuple(post_tuple)
+
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
 
         conn.commit()
         cur.close()
@@ -43,19 +53,28 @@ class PostService:
         return post
 
     def readOne(self, id_post):
-        conn = self.db.getConnection()
-        cur = conn.cursor()
 
-        cur.execute("SELECT id_post,id_user,id_url,state,date_published,date_deleted, text "
-                    "FROM youshare.posts WHERE id_post = %s", [id_post])
+        cur = None
+        conn = None
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
-        post_tuple = cur.fetchone()
+            cur.execute("SELECT id_post,id_user,id_url,state,date_published,date_deleted, text "
+                        "FROM youshare.posts WHERE id_post = %s", [id_post])
 
-        if post_tuple is None:
-            logger.warn('Not Found The post is not registered yet')
-            raise falcon.HTTPNotFound('Not Found', 'The post is not registered yet')
+            post_tuple = cur.fetchone()
 
-        post = Post.from_tuple(post_tuple)
+            if post_tuple is None:
+                logger.warn('Not Found The post is not registered yet')
+                raise falcon.HTTPNotFound('Not Found', 'The post is not registered yet')
+
+            post = Post.from_tuple(post_tuple)
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
         conn.commit()
         cur.close()
         self.db.freeConnexion()

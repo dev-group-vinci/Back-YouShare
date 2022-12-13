@@ -34,3 +34,11 @@ class Shares:
 
         resp.status = falcon.HTTP_201
         resp.body = dumps(nb_share, default=int)
+
+    @falcon.before(auth, enum.ROLE_USER)
+    def on_get_shared(self, req, resp, id_post):
+        id_user = req.context.user.id_user
+        isShared = self.shareServices.isShared(id_post, id_user)
+
+        resp.status = falcon.HTTP_201
+        resp.body = dumps(isShared, default=bool)

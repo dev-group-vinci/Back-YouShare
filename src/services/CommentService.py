@@ -27,6 +27,7 @@ class CommentService:
 
     def readCommentsPost(self, id_post):
         cur = None
+        conn = None
         try:
 
             self.postServices.readOne(id_post)
@@ -59,10 +60,12 @@ class CommentService:
         return listComment
 
     def addComment(self, commentObject):
-        if OpenAI.moderateContent(commentObject.text):
-            raise falcon.HTTPForbidden("Forbidden", "Text contains offensive language")
         cur = None
+        conn = None
         try:
+
+            if OpenAI.moderateContent(commentObject.text):
+                raise falcon.HTTPForbidden("Forbidden", "Text contains offensive language")
 
             post = self.postServices.readOne(commentObject.id_post)
             if post.state == enum.POST_DELETED:
@@ -101,6 +104,7 @@ class CommentService:
 
     def deleteAllCommentsPost(self, id_post, id_ownerPost_user):
         cur = None
+        conn = None
         try:
 
             post = self.postServices.readOne(id_post)
@@ -128,6 +132,7 @@ class CommentService:
 
     def deleteOneCommentPost(self, id_post, id_comment, id_ownerPost_user):
         cur = None
+        conn = None
         try:
             self.postServices.readOne(id_post)
             comment = self.readOneComment(id_comment)
@@ -162,6 +167,7 @@ class CommentService:
 
     def readOneComment(self, id_comment):
         cur = None
+        conn = None
         try:
             conn = self.db.getConnection()
             cur = conn.cursor()

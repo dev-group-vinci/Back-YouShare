@@ -73,7 +73,11 @@ class CommentService:
             raise falcon.HTTPForbidden("The post is actually deleted you can't comment it")
 
         if commentObject is not None:
-            self.readOneComment(commentObject.id_comment_parent)
+            try:
+                self.readOneComment(commentObject.id_comment_parent)
+            except BaseException as error:
+                logger.info("No comment parent found")
+                pass
 
         try:
 

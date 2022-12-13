@@ -38,6 +38,9 @@ Authorization: {{token}}
 
 
 ### Delete a comment of a post
+DELETE http://localhost:8989/posts/6/comments/36
+Content-Type: application/json
+Authorization: {{token}}
 
 ### Delete all comments of a post
 

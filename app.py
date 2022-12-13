@@ -43,6 +43,7 @@ if __name__ == '__main__':
     api.add_route('/users/search/{username}',users,suffix='search')
 
     api.add_route('/posts', posts)
+    api.add_route('/posts/me', posts, suffix='me')
     api.add_route('/posts/{id_post}', posts, suffix='post')
 
     api.add_route('/posts/{id_post}/likes', likes)

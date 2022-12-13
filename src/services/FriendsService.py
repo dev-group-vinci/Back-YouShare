@@ -4,6 +4,7 @@ from src.data.db import Db
 from src.utils import enum
 from src.services.UsersService import UserService
 from src.models.friends import Friends
+from src.utils.logging import logger
 
 class FriendsService:
     __instance = None
@@ -24,27 +25,35 @@ class FriendsService:
 
 
     def getAll(self,id_user):
-        conn = self.db.getConnection()
-        cur = conn.cursor()
+        cur = None
+        conn = None
 
-        cur.execute(
-            "SELECT fr.state,us.id_user,us.username,us.role,us.email,us.biography,us.picture "
-            "FROM youshare.friendships as fr, youshare.users as us "
-            "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
-            "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
-            "AND fr.state = %s ",
-            (id_user, id_user, id_user,enum.STATE_ACCEPTED)
-        )
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
-        # Récupérez les résultats de la requête
-        friends = cur.fetchall()
+            cur.execute(
+                "SELECT fr.state,us.id_user,us.username,us.role,us.email,us.biography,us.picture "
+                "FROM youshare.friendships as fr, youshare.users as us "
+                "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
+                "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
+                "AND fr.state = %s ",
+                (id_user, id_user, id_user,enum.STATE_ACCEPTED)
+            )
 
-        list = []
+            # Récupérez les résultats de la requête
+            friends = cur.fetchall()
 
-        # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
-        for friend in friends:
-            user = Friends.from_tuple(friend)
-            list.append(user.__dict__)
+            list = []
+
+            # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
+            for friend in friends:
+                user = Friends.from_tuple(friend)
+                list.append(user.__dict__)
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
 
         conn.commit()
         cur.close()
@@ -52,27 +61,35 @@ class FriendsService:
         return list
 
     def getAllFriendRequests(self,id_user):
-        conn = self.db.getConnection()
-        cur = conn.cursor()
+        cur = None
+        conn = None
 
-        cur.execute(
-            "SELECT fr.state,us.id_user,us.username,us.role,us.email,us.biography,us.picture "
-            "FROM youshare.friendships as fr, youshare.users as us "
-            "WHERE us.id_user = id_asker "
-            "AND fr.id_receiver = %s "
-            "AND fr.state != %s ",
-            (id_user, enum.STATE_ACCEPTED)
-        )
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
-        # Récupérez les résultats de la requête
-        friends = cur.fetchall()
+            cur.execute(
+                "SELECT fr.state,us.id_user,us.username,us.role,us.email,us.biography,us.picture "
+                "FROM youshare.friendships as fr, youshare.users as us "
+                "WHERE us.id_user = id_asker "
+                "AND fr.id_receiver = %s "
+                "AND fr.state != %s ",
+                (id_user, enum.STATE_ACCEPTED)
+            )
 
-        list = []
+            # Récupérez les résultats de la requête
+            friends = cur.fetchall()
 
-        # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
-        for friend in friends:
-            user = Friends.from_tuple(friend)
-            list.append(user.__dict__)
+            list = []
+
+            # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
+            for friend in friends:
+                user = Friends.from_tuple(friend)
+                list.append(user.__dict__)
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
 
         conn.commit()
         cur.close()
@@ -80,27 +97,35 @@ class FriendsService:
         return list
 
     def getAllMyFriendRequests(self,id_user):
-        conn = self.db.getConnection()
-        cur = conn.cursor()
+        cur = None
+        conn = None
 
-        cur.execute(
-            "SELECT fr.state,us.id_user,us.username,us.role,us.email,us.biography,us.picture "
-            "FROM youshare.friendships as fr, youshare.users as us "
-            "WHERE us.id_user = id_receiver "
-            "AND fr.id_asker = %s "
-            "AND fr.state != %s ",
-            (id_user, enum.STATE_ACCEPTED)
-        )
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
-        # Récupérez les résultats de la requête
-        friends = cur.fetchall()
+            cur.execute(
+                "SELECT fr.state,us.id_user,us.username,us.role,us.email,us.biography,us.picture "
+                "FROM youshare.friendships as fr, youshare.users as us "
+                "WHERE us.id_user = id_receiver "
+                "AND fr.id_asker = %s "
+                "AND fr.state != %s ",
+                (id_user, enum.STATE_ACCEPTED)
+            )
 
-        list = []
+            # Récupérez les résultats de la requête
+            friends = cur.fetchall()
 
-        # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
-        for friend in friends:
-            user = Friends.from_tuple(friend)
-            list.append(user.__dict__)
+            list = []
+
+            # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
+            for friend in friends:
+                user = Friends.from_tuple(friend)
+                list.append(user.__dict__)
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
 
         conn.commit()
         cur.close()
@@ -108,11 +133,19 @@ class FriendsService:
         return list
 
     def friendRequestExist(self,id_asker,id_receiver):
-        conn = self.db.getConnection()
-        cur = conn.cursor()
+        cur = None
+        conn = None
 
-        cur.execute("SELECT * FROM youshare.friendships WHERE (id_asker = %s AND id_receiver = %s) OR (id_asker = %s AND id_receiver = %s)", [id_asker, id_receiver,id_receiver,id_asker])
-        row = cur.fetchone()
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+
+            cur.execute("SELECT * FROM youshare.friendships WHERE (id_asker = %s AND id_receiver = %s) OR (id_asker = %s AND id_receiver = %s)", [id_asker, id_receiver,id_receiver,id_asker])
+            row = cur.fetchone()
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
 
         conn.commit()
         cur.close()
@@ -128,10 +161,18 @@ class FriendsService:
         if self.friendRequestExist(id_asker,id_receiver):
             raise falcon.HTTPConflict("Conflict","Friend request already exist")
 
-        conn = self.db.getConnection()
-        cur = conn.cursor()
+        cur = None
+        conn = None
 
-        cur.execute("INSERT INTO youshare.friendships(id_asker,id_receiver) VALUES (%s,%s)",[id_asker,id_receiver])
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+
+            cur.execute("INSERT INTO youshare.friendships(id_asker,id_receiver) VALUES (%s,%s)",[id_asker,id_receiver])
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
 
         conn.commit()
         cur.close()
@@ -146,11 +187,18 @@ class FriendsService:
         if not self.friendRequestExist(id_user, id_friend):
             raise falcon.HTTPNotFound("Not Found", "Friend request don't exist")
 
-        conn = self.db.getConnection()
-        cur = conn.cursor()
+        cur = None
+        conn = None
 
-        cur.execute("DELETE FROM youshare.friendships WHERE (id_asker = %s AND id_receiver = %s) OR (id_asker = %s AND id_receiver = %s)", [id_user, id_friend,id_friend,id_user])
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
+            cur.execute("DELETE FROM youshare.friendships WHERE (id_asker = %s AND id_receiver = %s) OR (id_asker = %s AND id_receiver = %s)", [id_user, id_friend,id_friend,id_user])
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
         conn.commit()
         cur.close()
         self.db.freeConnexion()
@@ -162,25 +210,46 @@ class FriendsService:
             raise falcon.HTTPNotFound("Not Found", "User not found")
         if not self.friendRequestExist(id_user, id_friend):
             raise falcon.HTTPNotFound("Not Found", "Friend request don't exist")
+        cur = None
+        conn = None
 
-        conn = self.db.getConnection()
-        cur = conn.cursor()
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
 
-        cur.execute("SELECT state FROM youshare.friendships WHERE id_receiver = %s AND id_asker = %s",[id_user,id_friend])
-        state = cur.fetchone()
+            cur.execute("SELECT state FROM youshare.friendships WHERE id_receiver = %s AND id_asker = %s",[id_user,id_friend])
+            state = cur.fetchone()
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
 
-        if state is None :
-            conn.commit()
-            cur.close()
-            raise falcon.HTTPForbidden("Forbidden","You cannot accept a friend request when you are the asker")
+        conn.commit()
+        cur.close()
+        self.db.freeConnexion()
+
+        if state is None:
+            raise falcon.HTTPForbidden("Forbidden", "You cannot accept a friend request when you are the asker")
         elif state[0] == enum.STATE_ACCEPTED:
-            conn.commit()
-            cur.close()
-            raise falcon.HTTPConflict("Conflict","Friend request already accepted")
+            raise falcon.HTTPConflict("Conflict", "Friend request already accepted")
+        else:
+            self.accept(id_user,id_friend)
 
-        cur.execute("UPDATE youshare.friendships SET state=%s WHERE id_receiver = %s AND id_asker = %s"
-                    ,[enum.STATE_ACCEPTED,id_user,id_friend])
+    def accept(self,id_user,id_friend):
+        cur = None
+        conn = None
+
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+            cur.execute("UPDATE youshare.friendships SET state=%s WHERE id_receiver = %s AND id_asker = %s"
+                        , [enum.STATE_ACCEPTED, id_user, id_friend])
+
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
 
         conn.commit()
         cur.close()
@@ -193,26 +262,46 @@ class FriendsService:
             raise falcon.HTTPNotFound("Not Found", "User not found")
         if not self.friendRequestExist(id_user, id_friend):
             raise falcon.HTTPNotFound("Not Found", "Friend request don't exist")
+        cur = None
+        conn = None
 
-        conn = self.db.getConnection()
-        cur = conn.cursor()
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
-        cur.execute("SELECT state FROM youshare.friendships WHERE id_receiver = %s AND id_asker = %s",
-                    [id_user, id_friend])
-        state = cur.fetchone()
-
-        if state is None:
-            conn.commit()
-            cur.close()
-            raise falcon.HTTPForbidden("Forbidden", "You cannot refuse a friend request when you are the asker")
-        elif state[0] == enum.STATE_REFUSED:
-            conn.commit()
-            cur.close()
-            raise falcon.HTTPConflict("Conflict", "Friend request already refused")
-
-        cur.execute("UPDATE youshare.friendships SET state=%s WHERE id_receiver = %s AND id_asker = %s"
-                    , [enum.STATE_REFUSED, id_user, id_friend])
+            cur.execute("SELECT state FROM youshare.friendships WHERE id_receiver = %s AND id_asker = %s",
+                        [id_user, id_friend])
+            state = cur.fetchone()
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
 
         conn.commit()
         cur.close()
         self.db.freeConnexion()
+
+        if state is None:
+            raise falcon.HTTPForbidden("Forbidden", "You cannot refuse a friend request when you are the asker")
+        elif state[0] == enum.STATE_REFUSED:
+            raise falcon.HTTPConflict("Conflict", "Friend request already refused")
+        elif state[0] == enum.STATE_ACCEPTED:
+            raise falcon.HTTPForbidden("Forbidden", "You cannot refuse a friend already accepted")
+        else:
+            self.refuse(id_friend,id_user)
+
+
+
+    def refuse(self,id_friend,id_user):
+
+        cur = None
+        conn = None
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+            cur.execute("UPDATE youshare.friendships SET state=%s WHERE id_receiver = %s AND id_asker = %s"
+                        , [enum.STATE_REFUSED, id_user, id_friend])
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err

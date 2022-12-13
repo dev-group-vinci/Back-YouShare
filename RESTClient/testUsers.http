@@ -92,3 +92,13 @@ Authorization: {{token}}
 
 GET http://localhost:8989/users/self/picture
 Authorization: {{token}}
+
+### Upload a picture TODO Eliott
+
+POST http://localhost:8989/users/self/picture
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "picture_name": "helloworld.png"
+}

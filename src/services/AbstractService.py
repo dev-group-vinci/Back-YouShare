@@ -24,13 +24,14 @@ class AbstractService:
     def add(self, table, id_post, id_user):
         cur = None
         conn = None
+
+        if self.isAlreadyPresent(table, id_post, id_user):
+            logger.warning("Post : {} is already done for user : {}".format(id_post, id_user))
+            raise falcon.HTTPConflict
+
         try:
 
             self.postServices.readOne(id_post)
-
-            if self.isAlreadyPresent(table, id_post, id_user):
-                logger.warning("Post : {} is already done for user : {}".format(id_post, id_user))
-                raise falcon.HTTPConflict
 
             conn = self.db.getConnection()
             cur = conn.cursor()
@@ -51,12 +52,13 @@ class AbstractService:
     def remove(self, table, id_post, id_user):
         cur = None
         conn = None
+
+        if not self.isAlreadyPresent(table, id_post, id_user):
+            logger.warning("Post : {} is already done for user : {}".format(id_post, id_user))
+            raise falcon.HTTPConflict
+
         try:
             self.postServices.readOne(id_post)
-
-            if not self.isAlreadyPresent(table, id_post, id_user):
-                logger.warning("Post : {} is already done for user : {}".format(id_post, id_user))
-                raise falcon.HTTPConflict
 
             conn = self.db.getConnection()
             cur = conn.cursor()

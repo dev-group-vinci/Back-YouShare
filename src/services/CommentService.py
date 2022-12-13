@@ -28,9 +28,10 @@ class CommentService:
     def readCommentsPost(self, id_post):
         cur = None
         conn = None
-        try:
 
-            self.postServices.readOne(id_post)
+        self.postServices.readOne(id_post)
+
+        try:
 
             conn = self.db.getConnection()
             cur = conn.cursor()
@@ -62,18 +63,19 @@ class CommentService:
     def addComment(self, commentObject):
         cur = None
         conn = None
+
+        if OpenAI.moderateContent(commentObject.text):
+            raise falcon.HTTPForbidden("Forbidden", "Text contains offensive language")
+
+        post = self.postServices.readOne(commentObject.id_post)
+        if post.state == enum.POST_DELETED:
+            logger.warning("The post is actually deleted you can't comment it")
+            raise falcon.HTTPForbidden("The post is actually deleted you can't comment it")
+
+        if commentObject is not None:
+            self.readOneComment(commentObject.id_comment_parent)
+
         try:
-
-            if OpenAI.moderateContent(commentObject.text):
-                raise falcon.HTTPForbidden("Forbidden", "Text contains offensive language")
-
-            post = self.postServices.readOne(commentObject.id_post)
-            if post.state == enum.POST_DELETED:
-                logger.warning("The post is actually deleted you can't comment it")
-                raise falcon.HTTPForbidden("The post is actually deleted you can't comment it")
-
-            if commentObject is not None:
-                self.readOneComment(commentObject.id_comment_parent)
 
             conn = self.db.getConnection()
             cur = conn.cursor()
@@ -105,13 +107,14 @@ class CommentService:
     def deleteAllCommentsPost(self, id_post, id_ownerPost_user):
         cur = None
         conn = None
+
+        post = self.postServices.readOne(id_post)
+
+        if post.id_user != id_ownerPost_user:
+            logger.warning("You are not available to delete all comment of this post")
+            raise falcon.HTTPForbidden("Not identified as the corresponding user")
+
         try:
-
-            post = self.postServices.readOne(id_post)
-
-            if post.id_user != id_ownerPost_user:
-                logger.warning("You are not available to delete all comment of this post")
-                raise falcon.HTTPForbidden("Not identified as the corresponding user")
 
             conn = self.db.getConnection()
             cur = conn.cursor()
@@ -133,13 +136,15 @@ class CommentService:
     def deleteOneCommentPost(self, id_post, id_comment, id_ownerPost_user):
         cur = None
         conn = None
-        try:
-            self.postServices.readOne(id_post)
-            comment = self.readOneComment(id_comment)
 
-            if comment.id_user != id_ownerPost_user:
-                logger.warning("You are not available to delete this comment ")
-                raise falcon.HTTPForbidden("Not identified as the corresponding user")
+        self.postServices.readOne(id_post)
+        comment = self.readOneComment(id_comment)
+
+        if comment.id_user != id_ownerPost_user:
+            logger.warning("You are not available to delete this comment ")
+            raise falcon.HTTPForbidden("Not identified as the corresponding user")
+
+        try:
 
             conn = self.db.getConnection()
             cur = conn.cursor()

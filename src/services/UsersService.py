@@ -22,6 +22,25 @@ class UserService:
             db = Db.getInstance()
             self.conn = db.conn
 
+    def getUsersLike(self,username):
+        cur = self.conn.cursor()
+        cur.execute("SELECT id_user, username, role, email, biography,picture FROM youshare.users WHERE username LIKE %s",["%"+username+"%"])
+        data = cur.fetchall()
+
+
+        users = []
+
+        for user in data:
+            users.append(Users.from_tuple(user).__dict__)
+
+        self.conn.commit()
+        cur.close()
+
+        if len(users) == 0:
+            raise falcon.HTTPNotFound('Not found','No users found')
+
+        return users
+
     def getUser(self, idUser):
         cur = self.conn.cursor()
         cur.execute("SELECT id_user, username, role, email, biography,picture FROM youshare.users WHERE id_user=%s", [idUser])

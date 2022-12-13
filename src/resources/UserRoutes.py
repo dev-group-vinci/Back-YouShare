@@ -46,6 +46,12 @@ class UserServices:
         resp.status = falcon.HTTP_200
         resp.body = dumps(user.__dict__)
 
+    @falcon.before(auth,enum.ROLE_USER)
+    def on_get_search(self,req,resp,username):
+        users = self.userServices.getUsersLike(username)
+        resp.status = falcon.HTTP_200
+        resp.body = dumps(users)
+
 
     @jsonschema.validate(load_schema('user_login'))
     def on_post_login(self, req, resp):

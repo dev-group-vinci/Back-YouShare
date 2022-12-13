@@ -240,7 +240,9 @@ class UserService:
         cur.execute("SELECT picture FROM youshare.users WHERE id_user = %s",
                     [id_user])
         picture_name = cur.fetchone()
-        #TODO eliott peut être checker des erreurs ?
+        print("fetcheeeeeeeeeeeeeee", picture_name)
+        if picture_name is None or picture_name[0] is None:
+            raise falcon.HTTPNotFound('Not Found', 'The user has no picture')
         self.conn.commit()
         cur.close()
 
@@ -251,7 +253,7 @@ class UserService:
 
         cur.execute("UPDATE youshare.users SET picture = %s WHERE id_user = %s",
                     [picture, id_user])
-        #TODO eliott peut être checker des erreurs ?
+        #  TODO eliott peut être checker des erreurs ?
         self.conn.commit()
         cur.close()
 

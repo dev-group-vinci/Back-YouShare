@@ -72,6 +72,9 @@ class UserServices:
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_get_picture(self, req, resp, id_user):
+        # get picture name from db
+        picture_name = self.userServices.getPicture(id_user)
+
         connection_string = os.getenv("CONNECTION_STRING")
         container_name = os.getenv("CONTAINER_NAME")
 
@@ -86,8 +89,6 @@ class UserServices:
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
-        #get picture name from db
-        picture_name = self.userServices.getPicture(id_user)
         #get image from azure blob
         blob_client = blob_service_client.get_blob_client(container=container_name, blob=picture_name)
         url = blob_client.url + "?" + sas_token
@@ -97,6 +98,9 @@ class UserServices:
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_get_self_picture(self, req, resp):
+        #get picture name from db
+        picture_name = self.userServices.getPicture(req.context.user.id_user)
+
         connection_string = os.getenv("CONNECTION_STRING")
         container_name = os.getenv("CONTAINER_NAME")
 
@@ -111,8 +115,6 @@ class UserServices:
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
-        #get picture name from db
-        picture_name = self.userServices.getPicture(req.context.user.id_user)
         #get image from azure blob
         blob_client = blob_service_client.get_blob_client(container=container_name, blob=picture_name)
         url = blob_client.url + "?" + sas_token
@@ -139,7 +141,7 @@ class UserServices:
                 blob_client.upload_blob(part.stream)
 
                 # Insert into database
-                self.userServices.updateUserPicture(req.context.user['id_user'], name_saved)
+                self.userServices.updateUserPicture(req.context.user.id_user, name_saved)
 
                 resp.status = falcon.HTTP_200
             else:

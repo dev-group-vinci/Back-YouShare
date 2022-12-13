@@ -42,7 +42,7 @@ class Db:
             self.conn.autocommit = False
         return self.conn
 
-    def close(self):
+    def freeConnexion(self):
         try:
             if self.pool and self.conn:
                 self.pool.putconn(self.conn)

@@ -38,7 +38,7 @@ class Comments:
         if comment.id_comment_parent == -1:
             comment.id_comment_parent = None
         comment = self.commentServices.addComment(comment)
-
+        comment.text = html.unescape(comment.text)
         resp.status = falcon.HTTP_201
         resp.body = dumps(comment, default=datetime_to_iso_str)
 

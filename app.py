@@ -40,6 +40,7 @@ if __name__ == '__main__':
     api.add_route('/users/register', users, suffix='register')
     api.add_route('/users/{id_user}/picture', users, suffix='picture')
     api.add_route('/users/self/picture', users, suffix='self_picture')
+    api.add_route('/users/search/{username}',users,suffix='search')
 
     api.add_route('/posts', posts)
     api.add_route('/posts/{id_post}', posts, suffix='post')

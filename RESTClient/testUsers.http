@@ -102,3 +102,8 @@ Content-Type: application/json
 {
   "picture_name": "helloworld.png"
 }
+
+### Search username like 'value'
+
+GET http://localhost:8989/users/search/a
+Authorization: {{token}}

@@ -3,6 +3,7 @@ import falcon
 from src.data.db import Db
 from src.utils import enum
 from src.models.users import Users
+from src.utils.logging import logger
 
 
 class UserService:
@@ -296,14 +297,23 @@ class UserService:
         return user[0]
 
     def getPicture(self, id_user):
-        conn = self.db.getConnection()
-        cur = conn.cursor()
+        cur = None
+        conn = None
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
-        cur.execute("SELECT picture FROM youshare.users WHERE id_user = %s",
-                    [id_user])
-        picture_name = cur.fetchone()
-        if picture_name is None or picture_name[0] is None:
-            raise falcon.HTTPNotFound('Not Found', 'The user has no picture')
+            cur.execute("SELECT picture FROM youshare.users WHERE id_user = %s",
+                        [id_user])
+            picture_name = cur.fetchone()
+            if picture_name is None or picture_name[0] is None:
+                logger.warning("User or picture not found")
+                raise falcon.HTTPNotFound('Not Found', 'The user has no picture')
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
         conn.commit()
         cur.close()
         self.db.freeConnexion()
@@ -311,12 +321,19 @@ class UserService:
         return picture_name[0]
 
     def updateUserPicture(self, id_user, picture):
-        conn = self.db.getConnection()
-        cur = conn.cursor()
+        cur = None
+        conn = None
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
-        cur.execute("UPDATE youshare.users SET picture = %s WHERE id_user = %s",
-                    [picture, id_user])
-        #TODO eliott peut être checker des erreurs ?
+            cur.execute("UPDATE youshare.users SET picture = %s WHERE id_user = %s",
+                        [picture, id_user])
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
         conn.commit()
         cur.close()
         self.db.freeConnexion()

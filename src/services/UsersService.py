@@ -38,7 +38,7 @@ class UserService:
             users = []
 
             for user in data:
-                users.append(Users.from_tuple(user).__dict__)
+                users.append(Users.from_tuple(user))
 
         except BaseException as err:
             conn.rollback()

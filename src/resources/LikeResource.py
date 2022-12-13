@@ -34,3 +34,11 @@ class Likes:
 
         resp.status = falcon.HTTP_201
         resp.body = dumps(nb_like, default=int)
+
+    @falcon.before(auth, enum.ROLE_USER)
+    def on_get_liked(self, req, resp, id_post):
+        id_user = req.context.user.id_user
+        isLiked = self.likeServices.isLiked(id_post, id_user)
+
+        resp.status = falcon.HTTP_201
+        resp.body = dumps(isLiked, default=bool)

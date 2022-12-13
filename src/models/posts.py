@@ -15,3 +15,7 @@ class Post:
     def from_tuple(cls, tuple):
         return cls(*tuple)
 
+    def create_new_post_from_json(self, json):
+        self.id_url = json['id_url']
+        self.text = json['text']
+        return self

@@ -59,34 +59,63 @@ class PostService:
 
         return post
 
+    def readMyPosts(self, id_user):
+        cur = None
+        try:
+            cur = self.conn.cursor()
+
+            cur.execute(
+                "SELECT id_post,id_user,id_url,state,date_published,date_deleted, text "
+                "FROM youshare.posts WHERE id_user = %s "
+                "ORDER BY date_published LIMIT 50; "
+                , [id_user]
+            )
+
+            posts = cur.fetchall()
+            listPost = []
+
+            for post in posts:
+                p = Post.from_tuple(post)
+                listPost.append(p)
+
+        except BaseException as err:
+            self.conn.rollback()
+            logger.warning(err)
+            raise err
+
+        self.conn.commit()
+        cur.close()
+        return listPost
+
     def readFeed(self, id_user):
         cur = None
         try:
             cur = self.conn.cursor()
 
-            cur.execute("SELECT id_post,id_user,id_url,state,date_published,date_deleted, text FROM youshare.posts WHERE id_user = %s "
-                        "OR id_post IN (SELECT id_post FROM youshare.likes WHERE id_user IN "
-                        "(SELECT us.id_user FROM youshare.friendships as fr, youshare.users as us "
-                        "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
-                        "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
-                        "AND fr.state = %s )) "
-                        "OR id_post IN (SELECT id_post FROM youshare.shares WHERE id_user IN "
-                        "(SELECT us.id_user "
-                        "FROM youshare.friendships as fr, youshare.users as us "
-                        "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
-                        "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
-                        "AND fr.state = %s )) "
-                        "OR id_post IN (SELECT id_post FROM youshare.posts WHERE id_user IN "
-                        "(SELECT us.id_user "
-                        "FROM youshare.friendships as fr, youshare.users as us "
-                        "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
-                        "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
-                        "AND fr.state = %s )) "
-                        "ORDER BY date_published LIMIT 50; ",
-                        [id_user, id_user, id_user, id_user, enum.STATE_ACCEPTED,
-                         id_user, id_user, id_user, enum.STATE_ACCEPTED,
-                         id_user, id_user, id_user, enum.STATE_ACCEPTED]
-                        )
+            cur.execute(
+                "SELECT id_post,id_user,id_url,state,date_published,date_deleted, text FROM youshare.posts WHERE id_user = %s "
+                "OR id_post IN (SELECT id_post FROM youshare.likes WHERE id_user IN "
+                "(SELECT us.id_user FROM youshare.friendships as fr, youshare.users as us "
+                "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
+                "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
+                "AND fr.state = %s )) "
+                "OR id_post IN (SELECT id_post FROM youshare.shares WHERE id_user IN "
+                "(SELECT us.id_user "
+                "FROM youshare.friendships as fr, youshare.users as us "
+                "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
+                "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
+                "AND fr.state = %s )) "
+                "OR id_post IN (SELECT id_post FROM youshare.posts WHERE id_user IN "
+                "(SELECT us.id_user "
+                "FROM youshare.friendships as fr, youshare.users as us "
+                "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
+                "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
+                "AND fr.state = %s )) "
+                "ORDER BY date_published LIMIT 50; ",
+                [id_user, id_user, id_user, id_user, enum.STATE_ACCEPTED,
+                 id_user, id_user, id_user, enum.STATE_ACCEPTED,
+                 id_user, id_user, id_user, enum.STATE_ACCEPTED]
+                )
 
             posts = cur.fetchall()
             listPost = []

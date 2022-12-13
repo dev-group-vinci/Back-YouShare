@@ -507,6 +507,32 @@ paths:
           content:
             'text/plain':
               example: 9
+  /posts/{id_post}/likes/is_liked:
+    parameters:
+      - name: id_post
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: Id of the post
+    get:
+      tags:
+        - posts
+      summary: Retrieve if the post is liked
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post not found
+        200:
+          description: Like status
+          content:
+            'text/plain':
+              example: true
+
   /posts/{id_post}/shares/:
     parameters:
       - name: id_post
@@ -566,6 +592,31 @@ paths:
           content:
             'text/plain':
               example: 9
+  /posts/{id_post}/shares/is_shared:
+    parameters:
+      - name: id_post
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: Id of the post
+    get:
+      tags:
+        - posts
+      summary: Retrieve if the post is shared
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post not found
+        200:
+          description: Share status
+          content:
+            'text/plain':
+              example: true
   /posts/comments/:
     post:
       requestBody:

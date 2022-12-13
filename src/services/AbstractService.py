@@ -23,6 +23,7 @@ class AbstractService:
 
     def add(self, table, id_post, id_user):
         cur = None
+        conn = None
         try:
 
             self.postServices.readOne(id_post)
@@ -49,6 +50,7 @@ class AbstractService:
 
     def remove(self, table, id_post, id_user):
         cur = None
+        conn = None
         try:
             self.postServices.readOne(id_post)
 
@@ -74,6 +76,7 @@ class AbstractService:
 
     def readNbItem(self, table, id_post):
         cur = None
+        conn = None
         try:
             conn = self.db.getConnection()
             cur = conn.cursor()
@@ -95,6 +98,7 @@ class AbstractService:
 
     def isAlreadyPresent(self, table, id_post, id_user):
         cur = None
+        conn = None
         try:
             self.postServices.readOne(id_post)
 

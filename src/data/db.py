@@ -37,8 +37,9 @@ class Db:
             raise error
 
     def getConnection(self):
-        self.conn = self.pool.getconn()
-        self.conn.autocommit = False
+        if self.conn is None:
+            self.conn = self.pool.getconn()
+            self.conn.autocommit = False
         return self.conn
 
     def close(self):

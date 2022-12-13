@@ -65,7 +65,7 @@ class Authenticate(object):
         userService = UserService.getInstance()
         user = userService.getUser(decodedToken['id'])
 
-        if user['role'] != role and user['role'] == enum.ROLE_USER:
+        if user.role != role and user.role == enum.ROLE_USER:
             logger.warning("Unauthorized access")
             raise falcon.HTTPNotAcceptable('Not Acceptable', 'Not authenticated as an admin ')
 

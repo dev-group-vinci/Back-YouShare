@@ -120,10 +120,10 @@ class CommentService:
         self.conn.commit()
         cur.close()
 
-    def deleteOneCommentPost(self, id_comment, id_ownerPost_user):
+    def deleteOneCommentPost(self, id_post, id_comment, id_ownerPost_user):
         cur = None
         try:
-
+            self.postServices.readOne(id_post)
             comment = self.readOneComment(id_comment)
 
             if comment.id_user != id_ownerPost_user:
@@ -134,11 +134,11 @@ class CommentService:
 
             cur.execute(
                 "UPDATE youshare.comments SET state = %s, date_deleted = %s "
-                "WHERE id_comment = %s"
-                "RETURNING id_comment, id_user, id_post,"
-                " id_comment_parent, text, state, date_published,"
-                " date_deleted"
-                , [enum.COMMENT_DELETED, datetime.now(timezone.utc), id_comment]
+                "WHERE id_comment = %s AND id_post = %s "
+                "RETURNING id_comment, id_user, id_post, "
+                "id_comment_parent, text, state, date_published, "
+                "date_deleted"
+                , [enum.COMMENT_DELETED, datetime.now(timezone.utc), id_comment, id_post]
             )
 
             comment_tuple = cur.fetchone()

@@ -1,11 +1,9 @@
 
 import os
 from datetime import datetime, timedelta
-import base64
-
+import uuid
 import falcon
 from json import dumps
-
 from azure.storage.blob import BlobServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
 from falcon.media.validators import jsonschema
 from src.media import load_schema
@@ -15,37 +13,38 @@ from src.utils import enum
 
 auth = Authenticate.getInstance()
 
-class Users:
+class UserServices:
     def __init__(self):
         self.userServices = UserService.getInstance()
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_get(self,req,resp):
         resp.status = falcon.HTTP_200
-        resp.body = dumps(req.context.user)
+
+        resp.body = dumps(req.context.user.__dict__)
 
     @jsonschema.validate(load_schema('user_update'))
     @falcon.before(auth,enum.ROLE_USER)
     def on_put(self,req,resp):
         raw_json = req.media
 
-        raw_json['id_user'] = req.context.user['id_user']
+        raw_json['id_user'] = req.context.user.id_user
         userUpdated = self.userServices.updateUser(raw_json)
 
         resp.status = falcon.HTTP_200
-        resp.body = dumps(userUpdated)
+        resp.body = dumps(userUpdated.__dict__)
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_get_id(self,req,resp,id_user):
         user = self.userServices.getUser(id_user)
         resp.status = falcon.HTTP_200
-        resp.body = dumps(user)
+        resp.body = dumps(user.__dict__)
 
     @falcon.before(auth,enum.ROLE_ADMIN)
     def on_put_id(self,req,resp,id_user):
         user = self.userServices.grantAdmin(id_user)
         resp.status = falcon.HTTP_200
-        resp.body = dumps(user)
+        resp.body = dumps(user.__dict__)
 
 
     @jsonschema.validate(load_schema('user_login'))
@@ -88,7 +87,7 @@ class Users:
         )
 
         #get picture name from db
-        picture_name = self.userServices.getPicture(int(id_user)) #TODO Eliott est ce que le int() est obligatoire ?
+        picture_name = self.userServices.getPicture(id_user)
         #get image from azure blob
         blob_client = blob_service_client.get_blob_client(container=container_name, blob=picture_name)
         url = blob_client.url + "?" + sas_token
@@ -113,7 +112,7 @@ class Users:
         )
 
         #get picture name from db
-        picture_name = self.userServices.getPicture(int(req.context.user['id_user'])) #TODO Eliott est ce que le int() est obligatoire ?
+        picture_name = self.userServices.getPicture(req.context.user.id_user)
         #get image from azure blob
         blob_client = blob_service_client.get_blob_client(container=container_name, blob=picture_name)
         url = blob_client.url + "?" + sas_token
@@ -121,23 +120,27 @@ class Users:
         resp.status = falcon.HTTP_200
         resp.body = dumps({'url': url})
 
-    def on_post_picture(self, req, resp, picture_name): #TODO savoir quoi mettre dans le body (surment picture_name)
-        # récupérer le json
-        raw_json = req.media
+    @falcon.before(auth,enum.ROLE_USER)
+    def on_post_self_picture(self, req, resp):
+        form = req.get_media()
+        for part in form:
+            if part.name == 'image':
+                # Create a unique name
+                now = datetime.now()
+                name_saved = now.strftime("%d-%m-%Y-%H:%M:%S") + str(uuid.uuid4()) + "." + part.secure_filename.rsplit('.', 1)[1]
 
-        now = datetime.now()
-        nameSaved = 'helloworld' + now.strftime("%d-%m-%Y-%H:%M:%S") + '.png'
+                # Send to Azure blob storage
+                connection_string = os.getenv("CONNECTION_STRING")
+                container_name = os.getenv("CONTAINER_NAME")
 
-        connection_string = os.getenv("CONNECTION_STRING")
-        container_name = os.getenv("CONTAINER_NAME")
+                blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+                blob_client = blob_service_client.get_blob_client(container=container_name, blob=name_saved)
 
-        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
-        blob_client = blob_service_client.get_blob_client(container=container_name, blob=nameSaved)
+                blob_client.upload_blob(part.stream)
 
-        with open("./helloworld.png", "rb") as data: #TODO hardcode le path du fichier
-            blob_client.upload_blob(data)
-            print(f"Uploaded {nameSaved}.") # TODO enlever le print ?
+                # Insert into database
+                self.userServices.updateUserPicture(req.context.user['id_user'], name_saved)
 
-        resp.status = falcon.HTTP_200
-        # renvoyer le json
-        resp.body = dumps(raw_json)
+                resp.status = falcon.HTTP_200
+            else:
+                resp.status = falcon.HTTP_404

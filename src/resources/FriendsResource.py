@@ -1,10 +1,9 @@
 import falcon
 from json import dumps
-from falcon.media.validators import jsonschema
-from src.media import load_schema
+from src.utils import enum
+from src.utils.json import parseList
 from src.utils.Authenticate import Authenticate
 from src.services.FriendsService import FriendsService
-from src.utils import enum
 
 auth = Authenticate.getInstance()
 
@@ -18,21 +17,21 @@ class Friends:
         list_friends = self.friendsService.getAll(req.context.user.id_user)
 
         resp.status = falcon.HTTP_200
-        resp.body = dumps(list_friends)
+        resp.body = dumps(parseList(list_friends))
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_get_requests(self,req,resp):
         list_friends = self.friendsService.getAllFriendRequests(req.context.user.id_user)
 
         resp.status = falcon.HTTP_200
-        resp.body = dumps(list_friends)
+        resp.body = dumps(parseList(list_friends))
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_get_self(self,req,resp):
         list_friends = self.friendsService.getAllMyFriendRequests(req.context.user.id_user)
 
         resp.status = falcon.HTTP_200
-        resp.body = dumps(list_friends)
+        resp.body = dumps(parseList(list_friends))
 
     @falcon.before(auth,enum.ROLE_USER)
     def on_post_id(self,req,resp,id_friend):

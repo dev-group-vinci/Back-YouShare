@@ -1,14 +1,14 @@
 import falcon
 import html
-from src.utils.Authenticate import Authenticate
-from src.utils import enum
-from src.utils.json import datetime_to_iso_str
-from src.models.comments import Comment
-from src.services.CommentService import CommentService
 from json import dumps
+from src.utils import enum
 from src.media import load_schema
-from src.utils.json import parseList, parseElement
+from src.models.comments import Comment
+from src.utils.json import datetime_to_iso_str
 from falcon.media.validators import jsonschema
+from src.utils.Authenticate import Authenticate
+from src.utils.json import parseList, parseElement
+from src.services.CommentService import CommentService
 
 auth = Authenticate.getInstance()
 

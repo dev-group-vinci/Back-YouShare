@@ -1,13 +1,8 @@
-import json
-
 import falcon
-from falcon.media.validators import jsonschema
-from src.media import load_schema
-from src.utils.Authenticate import Authenticate
-from src.utils import enum
-from src.services.PostsService import PostService
-from src.services.LikesService import LikeService
 from json import dumps
+from src.utils import enum
+from src.utils.Authenticate import Authenticate
+from src.services.LikesService import LikeService
 
 auth = Authenticate.getInstance()
 

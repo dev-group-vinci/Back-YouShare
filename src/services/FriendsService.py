@@ -1,10 +1,9 @@
-import bcrypt
 import falcon
-from src.data.db import Db
 from src.utils import enum
-from src.services.UsersService import UserService
-from src.models.friends import Friends
+from src.data.db import Db
 from src.utils.logging import logger
+from src.models.friends import Friends
+from src.services.UsersService import UserService
 
 class FriendsService:
     __instance = None
@@ -49,7 +48,7 @@ class FriendsService:
             # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
             for friend in friends:
                 user = Friends.from_tuple(friend)
-                list.append(user.__dict__)
+                list.append(user)
         except BaseException as err:
             conn.rollback()
             logger.warning(err)
@@ -85,7 +84,7 @@ class FriendsService:
             # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
             for friend in friends:
                 user = Friends.from_tuple(friend)
-                list.append(user.__dict__)
+                list.append(user)
         except BaseException as err:
             conn.rollback()
             logger.warning(err)
@@ -121,7 +120,7 @@ class FriendsService:
             # Affichez les amis de l'utilisateur et leur rôle (expéditeur ou destinataire)
             for friend in friends:
                 user = Friends.from_tuple(friend)
-                list.append(user.__dict__)
+                list.append(user)
         except BaseException as err:
             conn.rollback()
             logger.warning(err)

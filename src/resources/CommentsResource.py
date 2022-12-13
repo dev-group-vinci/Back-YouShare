@@ -1,5 +1,5 @@
 import falcon
-
+import html
 from src.utils.Authenticate import Authenticate
 from src.utils import enum
 from src.utils.json import datetime_to_iso_str
@@ -31,7 +31,10 @@ class Comments:
         raw_json = req.media
         comment = Comment()
         comment.create_new_comment_from_json(raw_json)
+
         comment.id_user = id_user
+        comment.text = html.escape(comment.text)
+
         if comment.id_comment_parent == -1:
             comment.id_comment_parent = None
         comment = self.commentServices.addComment(comment)

@@ -3,11 +3,6 @@
     "description": "Information of the new comment",
     "type": "object",
     "properties": {
-        "id_user": {
-            "title": "Id of the user",
-            "type": "int",
-            "maxLength": 11
-        },
         "id_post": {
             "title": "Id of the post",
             "type": "int"

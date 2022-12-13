@@ -530,7 +530,6 @@ paths:
             schema:
               $ref: '#/components/schemas/newComment'
             example:
-              id_user: 5
               id_post: 1
               id_comment_parent: null
               text: Trop bien expliqué mais vidéo un peu longue !
@@ -738,16 +737,10 @@ components:
       properties:
         id_url:
           type: string
-        state:
-          type: string
-          enum:
-            - published
-            - deleted
         text:
           type: string
       example:
         id_url: TaAM5MovXp0
-        state: published
         text: Merci Jamy !
     newUser:
       type: object

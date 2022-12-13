@@ -21,8 +21,7 @@ Authorization: {{token}}
 
 {
   "id_post": 6,
-  "id_comment_parent": -1,
-  "state": "published",
+  "id_comment_parent": null,
   "text": "Trop bien expliqué mais vidéo un peu longue !"
 }
 

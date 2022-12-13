@@ -246,5 +246,14 @@ class UserService:
 
         return picture_name[0]
 
+    def updateUserPicture(self, id_user, picture):
+        cur = self.conn.cursor()
+
+        cur.execute("UPDATE youshare.users SET picture = %s WHERE id_user = %s",
+                    [picture, id_user])
+        #TODO eliott peut être checker des erreurs ?
+        self.conn.commit()
+        cur.close()
+
 
 

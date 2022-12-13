@@ -1,15 +1,15 @@
-from wsgiref.simple_server import make_server
+import os
 import falcon
+from src.data.db import Db
 from src.middleware import logging
+from src.utils.logging import logger
+from wsgiref.simple_server import make_server
 from src.resources.PostResource import Posts
-from src.resources.FriendsResource import Friends
-from src.resources.UserResource import UserRessource
 from src.resources.LikeResource import Likes
 from src.resources.ShareResource import Shares
+from src.resources.FriendsResource import Friends
 from src.resources.CommentsResource import Comments
-from src.data.db import Db
-from src.utils.logging import logger
-import os
+from src.resources.UserResource import UserRessource
 
 if __name__ == '__main__':
     api = falcon.App(cors_enable=True, middleware=[
@@ -51,6 +51,7 @@ if __name__ == '__main__':
 
     api.add_route('/posts/{id_post}/comments/', comments)
     api.add_route('/posts/comments/', comments)
+    api.add_route('/posts/comments/{id_comment}', comments, suffix='id')
     api.add_route('/posts/{id_post}/comments/{id_comment}', comments, suffix='one')
 
     logger.info("Server started")

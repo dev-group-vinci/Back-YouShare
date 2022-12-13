@@ -1,11 +1,11 @@
 import falcon
-from src.models.comments import Comment
-from src.data.db import Db
-from datetime import datetime, timezone
-from src.utils.logging import logger
-from src.services.PostsService import PostService
 from src.utils import enum
+from src.data.db import Db
 from src.utils.OpenAI import OpenAI
+from src.utils.logging import logger
+from datetime import datetime, timezone
+from src.models.comments import Comment
+from src.services.PostsService import PostService
 
 
 class CommentService:

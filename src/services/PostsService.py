@@ -137,7 +137,7 @@ class PostService:
                 "WHERE CASE WHEN fr.id_asker = %s THEN us.id_user = id_receiver ELSE us.id_user = id_asker END "
                 "AND (fr.id_asker = %s OR fr.id_receiver = %s) "
                 "AND fr.state = %s )) "
-                "ORDER BY date_published LIMIT 50; ",
+                "ORDER BY date_published desc LIMIT 50; ",
                 [id_user, id_user, id_user, id_user, enum.STATE_ACCEPTED,
                  id_user, id_user, id_user, enum.STATE_ACCEPTED,
                  id_user, id_user, id_user, enum.STATE_ACCEPTED]

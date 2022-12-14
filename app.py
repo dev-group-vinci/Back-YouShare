@@ -45,6 +45,7 @@ if __name__ == '__main__':
     api.add_route('/posts', posts)
     api.add_route('/posts/me', posts, suffix='me')
     api.add_route('/posts/{id_post}', posts, suffix='one')
+    api.add_route('/posts/{id_user}', posts, suffix='user')
 
     api.add_route('/posts/{id_post}/likes', likes)
     api.add_route('/posts/{id_post}/likes/is_liked', likes, suffix='liked')

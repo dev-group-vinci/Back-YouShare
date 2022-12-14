@@ -76,6 +76,10 @@ GET http://localhost:8989/friends/self/requests
 Authorization: {{token}}
 
 
+### Get a friend
+GET http://localhost:8989/friends/6
+Authorization: {{token}}
+
 ### Add a friend
 POST http://localhost:8989/friends/6
 Authorization: {{token}}

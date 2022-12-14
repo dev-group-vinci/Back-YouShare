@@ -53,11 +53,19 @@ class Posts:
         resp.body = dumps(parseList(posts), default=datetime_to_iso_str)
 
     @falcon.before(auth, enum.ROLE_USER)
-    def on_get_post(self, req, resp, id_post):
+    def on_get_one(self, req, resp, id_post):
         post = self.postServices.readOne(id_post)
 
         resp.status = falcon.HTTP_200
         resp.body = dumps(parseElement(post), default=datetime_to_iso_str)
+
+    @falcon.before(auth, enum.ROLE_USER)
+    def on_delete_one(self, req, resp, id_post):
+        user = req.context.user
+
+        self.postServices.deleteOne(id_post, user)
+
+        resp.status = falcon.HTTP_202
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_post_like(self, req, resp, id_post):
@@ -66,11 +74,3 @@ class Posts:
 
         resp.status = falcon.HTTP_201
         resp.body = dumps(nb_like, default=int)
-
-    @falcon.before(auth, enum.ROLE_USER)
-    def on_delete(self, req, resp, id_post):
-        user = req.context.user
-
-        self.postServices.deleteOne(id_post, user)
-
-        resp.status = falcon.HTTP_202

@@ -474,6 +474,30 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/post'
+    delete:
+      tags:
+        - posts
+      summary: delete a specific post
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        404:
+          description: Post not found
+        202:
+          description: Sent post information
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/post'
+              example:
+                id_post: 1
+                id_url: TaAM5MovXp0
+                state: deleted
+                text: Merci Jamy !
+                date_published: 2022-10-24 10:45:00
+                date_deleted: 2022-10-27 12:22:42
   /posts/{id_post}/likes/:
     parameters:
       - name: id_post

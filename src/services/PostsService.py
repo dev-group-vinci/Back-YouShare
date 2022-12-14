@@ -90,7 +90,7 @@ class PostService:
             cur.execute(
                 "SELECT id_post,id_user,id_url,state,date_published,date_deleted, text "
                 "FROM youshare.posts WHERE id_user = %s "
-                "ORDER BY date_published LIMIT 50; "
+                "ORDER BY date_published desc LIMIT 50; "
                 , [id_user]
             )
 

@@ -230,7 +230,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/user'
+                  $ref: '#/components/schemas/friend_request'
 
   /friends/requests:
     get:
@@ -249,7 +249,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/user'
+                  $ref: '#/components/schemas/friend_request'
 
   /friends/self/requests:
     get:
@@ -268,7 +268,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/user'
+                  $ref: '#/components/schemas/friend_request'
 
   /friends/{id_friend}:
     parameters:
@@ -278,6 +278,25 @@ paths:
         schema:
           type: integer
           example: 6
+    get:
+      tags:
+        - friends
+      summary: Get a friend request
+      security:
+        - jwtAuth : []
+      responses:
+        200:
+          description: Send friend request
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/friend_request'
+        401:
+          description: Missing authentication
+        403:
+          description: You cannot get yourself friend request
+        404:
+          description: Friend request not found
     post:
       tags:
         - friends
@@ -955,3 +974,36 @@ components:
         role: user
         email: mehdi@gmail.com
         biography: I love sharing video
+
+    friend_request:
+      type: object
+      properties:
+        id_user:
+          type: integer
+        username:
+          type: string
+        role:
+          type: string
+          enum:
+            - user
+            - admin
+        email:
+          type: string
+        biography:
+          type: string
+        state:
+          type: string
+          description: state of the friend request (sended and received are more details about pending)
+          enum:
+            - pending
+            - accepted
+            - refused
+            - sended
+            - received
+      example:
+        id_user: 1
+        username: Mehdi
+        role: user
+        email: mehdi@gmail.com
+        biography: I love sharing video
+        state: pending

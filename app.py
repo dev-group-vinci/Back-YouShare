@@ -1,15 +1,15 @@
-from wsgiref.simple_server import make_server
+import os
 import falcon
+from src.data.db import Db
 from src.middleware import logging
+from src.utils.logging import logger
+from wsgiref.simple_server import make_server
 from src.resources.PostResource import Posts
-from src.resources.FriendsResource import Friends
-from src.resources.UserRoutes import Users
 from src.resources.LikeResource import Likes
 from src.resources.ShareResource import Shares
+from src.resources.FriendsResource import Friends
 from src.resources.CommentsResource import Comments
-from src.data.db import Db
-from src.utils.logging import logger
-import os
+from src.resources.UserResource import UserRessource
 
 if __name__ == '__main__':
     api = falcon.App(cors_enable=True, middleware=[
@@ -17,10 +17,10 @@ if __name__ == '__main__':
     ])
 
     # database connection
-    database = Db()
+    database = Db().getInstance()
     database.connect()
 
-    users = Users()
+    users = UserRessource()
     posts = Posts()
     likes = Likes()
     shares = Shares()
@@ -40,16 +40,21 @@ if __name__ == '__main__':
     api.add_route('/users/register', users, suffix='register')
     api.add_route('/users/{id_user}/picture', users, suffix='picture')
     api.add_route('/users/self/picture', users, suffix='self_picture')
+    api.add_route('/users/search/{username}',users,suffix='search')
 
     api.add_route('/posts', posts)
+    api.add_route('/posts/me', posts, suffix='me')
     api.add_route('/posts/{id_post}', posts, suffix='post')
 
     api.add_route('/posts/{id_post}/likes', likes)
+    api.add_route('/posts/{id_post}/likes/is_liked', likes, suffix='liked')
     api.add_route('/posts/{id_post}/shares', shares)
+    api.add_route('/posts/{id_post}/shares/is_shared', shares, suffix='shared')
 
     api.add_route('/posts/{id_post}/comments/', comments)
     api.add_route('/posts/comments/', comments)
-    api.add_route('/posts/comments/{id_comment}', comments, suffix='one')
+    api.add_route('/posts/comments/{id_comment}', comments, suffix='id')
+    api.add_route('/posts/{id_post}/comments/{id_comment}', comments, suffix='one')
 
     logger.info("Server started")
 
@@ -61,5 +66,5 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             pass
         logger.info("Server closed")
-        database.close()
+        database.freeConnexion()
         httpd.server_close()

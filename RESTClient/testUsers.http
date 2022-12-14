@@ -4,8 +4,8 @@ POST http://localhost:8989/users/register
 Content-Type: application/json
 
 {
-  "username": "rayan",
-  "email" : "rayan@gmail.com",
+  "username": "rayann",
+  "email" : "rayann@gmail.com",
   "password" : "M0tde@"
 }
 
@@ -35,7 +35,7 @@ POST http://localhost:8989/users/login
 Content-Type: application/json
 
 {
-  "username" : "rayan",
+  "username" : "rayann",
   "password" : "M0tde@"
 }
 
@@ -70,7 +70,7 @@ Content-Type: application/json
 
 {
   "biography": "Je suis heureuse",
-  "password": "zou"
+  "password": "M0tde@"
 }
 
 ### Get user by id
@@ -85,10 +85,15 @@ Authorization: {{token}}
 
 ### Get picture of a user
 
-GET http://localhost:8989/users/1/picture
+GET http://localhost:8989/users/2/picture
 Authorization: {{token}}
 
 ### Get self picture
 
 GET http://localhost:8989/users/self/picture
+Authorization: {{token}}
+
+### Search username like 'value'
+
+GET http://localhost:8989/users/search/a
 Authorization: {{token}}

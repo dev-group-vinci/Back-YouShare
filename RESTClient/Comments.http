@@ -21,8 +21,7 @@ Authorization: {{token}}
 
 {
   "id_post": 6,
-  "id_comment_parent": -1,
-  "state": "published",
+  "id_comment_parent": null,
   "text": "Trop bien expliqué mais vidéo un peu longue !"
 }
 
@@ -39,6 +38,9 @@ Authorization: {{token}}
 
 
 ### Delete a comment of a post
+DELETE http://localhost:8989/posts/6/comments/36
+Content-Type: application/json
+Authorization: {{token}}
 
 ### Delete all comments of a post
 

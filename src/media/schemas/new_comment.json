@@ -1,0 +1,23 @@
+{
+    "title": "New comment Schema",
+    "description": "Information of the new comment",
+    "type": "object",
+    "properties": {
+        "id_post": {
+            "title": "Id of the post",
+            "type": "integer"
+        },
+        "id_comment_parent": {
+            "title": "Id of the post",
+            "type": ["integer", "null"]
+        },
+        "text": {
+            "type": "string",
+            "title": "Content of the comment"
+        }
+    },
+    "required": [
+        "id_post",
+        "text"
+    ]
+}

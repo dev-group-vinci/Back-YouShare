@@ -35,7 +35,7 @@ class FriendsService:
             conn = self.db.getConnection()
             cur = conn.cursor()
 
-            cur.execute("SELECT CASE WHEN fr.state = %s AND fr.id_receiver = %s THEN 'received' ELSE 'sended' END as state,"
+            cur.execute("SELECT CASE WHEN fr.state = %s THEN CASE WHEN fr.id_receiver = %s THEN 'received' ELSE 'sended' END ELSE fr.state END as state,"
                         "us.id_user,us.username,us.role,us.email,us.biography,us.picture "
                         "FROM youshare.friendships fr,youshare.users us "
                         "WHERE CASE WHEN fr.id_receiver = %s THEN us.id_user = fr.id_asker ELSE us.id_user = fr.id_receiver END "

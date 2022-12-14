@@ -80,6 +80,11 @@ Authorization: {{token}}
 GET http://localhost:8989/friends/4
 Authorization: {{token}}
 
+### Get a friend
+GET http://localhost:8989/friends/6
+Authorization: {{token}}
+
+
 ### Add a friend
 POST http://localhost:8989/friends/6
 Authorization: {{token}}

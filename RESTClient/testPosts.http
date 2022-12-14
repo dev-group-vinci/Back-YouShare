@@ -54,6 +54,10 @@ Authorization: {{token}}
 GET http://localhost:8989/posts/1/likes
 Authorization: {{token}}
 
+### is liked ?
+
+GET http://localhost:8989//posts/1/likes/is_liked
+Authorization: {{token}}
 
 ### Share a post
 

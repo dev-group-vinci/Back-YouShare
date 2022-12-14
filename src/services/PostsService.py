@@ -80,7 +80,7 @@ class PostService:
         self.db.freeConnexion()
         return post
 
-    def readMyPosts(self, id_user):
+    def readUserPosts(self, id_user):
         cur = None
         conn = None
         try:
@@ -141,7 +141,7 @@ class PostService:
                 [id_user, id_user, id_user, id_user, enum.STATE_ACCEPTED,
                  id_user, id_user, id_user, enum.STATE_ACCEPTED,
                  id_user, id_user, id_user, enum.STATE_ACCEPTED]
-                )
+            )
 
             posts = cur.fetchall()
             listPost = []
@@ -159,3 +159,38 @@ class PostService:
         cur.close()
         self.db.freeConnexion()
         return listPost
+
+    def deleteOne(self, id_post, user):
+        cur = None
+        conn = None
+
+        post = self.readOne(id_post)
+
+        if post.id_user != user.id_user and user.role != enum.ROLE_ADMIN:
+            logger.warning("You are not available to delete this post ")
+            raise falcon.HTTPForbidden("Not identified as the corresponding user or you are not admin !")
+
+        try:
+
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+
+            cur.execute(
+                "UPDATE youshare.posts SET state = %s, date_deleted = %s "
+                "WHERE id_post = %s "
+                "RETURNING id_post, id_user, id_url, "
+                "state, date_published, date_deleted, text "
+                , [enum.POST_DELETED, datetime.now(timezone.utc), id_post]
+            )
+
+            post_tuple = cur.fetchone()
+            post = Post.from_tuple(post_tuple)
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+        conn.commit()
+        cur.close()
+        self.db.freeConnexion()
+        return post

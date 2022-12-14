@@ -66,7 +66,7 @@ class Posts:
         resp.status = falcon.HTTP_200
         resp.body = dumps(parseElement(post), default=datetime_to_iso_str)
 
-    @falcon.before(auth, enum.ROLE_USER)
+    @falcon.before(auth, enum.ROLE_ADMIN)
     def on_delete_one(self, req, resp, id_post):
         user = req.context.user
 

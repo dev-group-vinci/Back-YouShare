@@ -1,4 +1,5 @@
 import html
+from src.utils.pictureManager import convert_picture
 
 class Friends:
 
@@ -14,7 +15,8 @@ class Friends:
 
     @classmethod
     def from_tuple(cls, tuple):
-        return cls(*tuple)
+        temp = (tuple[0], tuple[1], tuple[2], tuple[3], tuple[4], convert_picture(tuple[5]))
+        return cls(*temp)
 
     def unescape(self):
         if self.username is not None:

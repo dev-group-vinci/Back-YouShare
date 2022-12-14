@@ -6,6 +6,7 @@ from src.utils.logging import logger
 from datetime import datetime, timezone
 from src.models.comments import Comment
 from src.services.PostsService import PostService
+from src.services.UsersService import UserService
 
 
 class CommentService:
@@ -24,6 +25,7 @@ class CommentService:
             CommentService.__instance = self
         self.db = Db.getInstance()
         self.postServices = PostService.getInstance()
+        self.userServices = UserService.getInstance()
 
     def readCommentsPost(self, id_post):
         cur = None
@@ -108,13 +110,13 @@ class CommentService:
         self.db.freeConnexion()
         return comment
 
-    def deleteAllCommentsPost(self, id_post, id_ownerPost_user):
+    def deleteAllCommentsPost(self, id_post, user):
         cur = None
         conn = None
 
         post = self.postServices.readOne(id_post)
 
-        if post.id_user != id_ownerPost_user:
+        if post.id_user != user.id_user and user.role != enum.ROLE_ADMIN:
             logger.warning("You are not available to delete all comment of this post")
             raise falcon.HTTPForbidden("Not identified as the corresponding user")
 
@@ -137,16 +139,16 @@ class CommentService:
         cur.close()
         self.db.freeConnexion()
 
-    def deleteOneCommentPost(self, id_post, id_comment, id_ownerPost_user):
+    def deleteOneCommentPost(self, id_post, id_comment, user):
         cur = None
         conn = None
 
         self.postServices.readOne(id_post)
         comment = self.readOneComment(id_comment)
 
-        if comment.id_user != id_ownerPost_user:
+        if comment.id_user != user.id_user and user.role != enum.ROLE_ADMIN:
             logger.warning("You are not available to delete this comment ")
-            raise falcon.HTTPForbidden("Not identified as the corresponding user")
+            raise falcon.HTTPForbidden("Not identified as the corresponding user or you are not admin !")
 
         try:
 

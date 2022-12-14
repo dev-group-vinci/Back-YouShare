@@ -164,4 +164,4 @@ class UserRessource:
 
                 resp.status = falcon.HTTP_200
             else:
-                resp.status = falcon.HTTP_404
+                raise falcon.HTTP_BAD_REQUEST('Bad Request', 'the image must have valid format')

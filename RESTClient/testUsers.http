@@ -4,8 +4,8 @@ POST http://localhost:8989/users/register
 Content-Type: application/json
 
 {
-  "username": "rayan",
-  "email" : "rayan@gmail.com",
+  "username": "rayann",
+  "email" : "rayann@gmail.com",
   "password" : "M0tde@"
 }
 
@@ -35,7 +35,7 @@ POST http://localhost:8989/users/login
 Content-Type: application/json
 
 {
-  "username" : "rayan",
+  "username" : "rayann",
   "password" : "M0tde@"
 }
 

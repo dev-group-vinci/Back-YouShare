@@ -12,7 +12,7 @@ from src.resources.CommentsResource import Comments
 from src.resources.UserResource import UserRessource
 
 if __name__ == '__main__':
-    api = falcon.App(cors_enable=False, middleware=[
+    api = falcon.App(cors_enable=True, middleware=[
         logging.LoggingMiddleware()
     ])
 

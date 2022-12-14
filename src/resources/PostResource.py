@@ -70,9 +70,10 @@ class Posts:
     def on_delete_one(self, req, resp, id_post):
         user = req.context.user
 
-        self.postServices.deleteOne(id_post, user)
+        post = self.postServices.deleteOne(id_post, user)
 
         resp.status = falcon.HTTP_202
+        resp.body = dumps(parseElement(post), default=datetime_to_iso_str)
 
     @falcon.before(auth, enum.ROLE_USER)
     def on_post_like(self, req, resp, id_post):

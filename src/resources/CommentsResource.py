@@ -63,6 +63,7 @@ class Comments:
     def on_delete_one(self, req, resp, id_post, id_comment):
         user = req.context.user
 
-        self.commentServices.deleteOneCommentPost(id_post, id_comment, user)
+        comment = self.commentServices.deleteOneCommentPost(id_post, id_comment, user)
 
         resp.status = falcon.HTTP_202
+        resp.body = dumps(parseElement(comment), default=datetime_to_iso_str)

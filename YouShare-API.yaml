@@ -422,6 +422,32 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/post'
+  /posts/users/{id_user}:
+    parameters:
+      - name: id_user
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: Id of the user
+    get:
+      tags:
+        - posts
+      summary: retrieves the user's posts
+      security:
+        - jwtAuth: [ ]
+      responses:
+        401:
+          description: Missing authentication
+        200:
+          description: Sent posts information
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/post'
   /posts/{id_post}:
     parameters:
       - name: id_post

@@ -2,6 +2,8 @@ import bcrypt
 import falcon
 from src.data.db import Db
 from src.utils import enum
+from src.models.users import Users
+from src.utils.logging import logger
 
 
 class UserService:
@@ -18,114 +20,241 @@ class UserService:
             raise Exception("UserService instance already exist !!")
         else:
             UserService.__instance = self
-            db = Db.getInstance()
-            self.conn = db.conn
+            self.db = Db.getInstance()
+
+    def getUsersLike(self, username):
+        cur = None
+        conn = None
+
+        try:
+
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id_user, username, role, email, biography,picture FROM youshare.users WHERE username LIKE %s",
+                ["%" + username + "%"])
+            data = cur.fetchall()
+
+            users = []
+
+            for user in data:
+                users.append(Users.from_tuple(user))
+
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+        conn.commit()
+        cur.close()
+        self.db.freeConnexion()
+
+        if len(users) == 0:
+            raise falcon.HTTPNotFound('Not found', 'No users found')
+
+        return users
 
     def getUser(self, idUser):
-        cur = self.conn.cursor()
-        cur.execute("SELECT id_user, username, role, email, biography FROM youshare.users WHERE id_user=%s", [idUser])
-        user = cur.fetchone()
-        if user is None:
-            self.conn.commit
-            cur.close()
-            raise falcon.HTTPNotFound('Not Found', 'The user is not found')
-        self.conn.commit()
+        cur = None
+        conn = None
+
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+
+            cur.execute("SELECT id_user, username, role, email, biography,picture FROM youshare.users WHERE id_user=%s",
+                        [idUser])
+            data = cur.fetchone()
+
+            if data is None:
+                self.conn.commit
+                cur.close()
+                raise falcon.HTTPNotFound('Not Found', 'The user is not found')
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
+        user = Users.from_tuple(data)
 
-        return {
-            "id_user": user[0],
-            "username": user[1],
-            "role": user[2],
-            "email": user[3],
-            "biography": user[4]
-        }
+        return user
 
-    def userExist(self,id_user):
-        cur = self.conn.cursor()
-        cur.execute("SELECT id_user, username, role, email, biography FROM youshare.users WHERE id_user=%s",
-                    [id_user])
-        user = cur.fetchone()
-        self.conn.commit()
+    def userExist(self, id_user):
+        cur = None
+        conn = None
+
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+
+            cur.execute("SELECT id_user, username, role, email, biography FROM youshare.users WHERE id_user=%s",
+                        [id_user])
+
+            user = cur.fetchone()
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+        conn.commit()
         cur.close()
-
+        self.db.freeConnexion()
         return user is not None
 
-    def usernameExist(self,username):
-        cur = self.conn.cursor()
-        cur.execute(
-            "SELECT id_user, username, role, email, biography FROM youshare.users WHERE lower(username)=lower(%s)",
-            [username])
-        user = cur.fetchone()
-        self.conn.commit()
+    def usernameExist(self, username):
+        cur = None
+        conn = None
+
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+
+            cur.execute(
+                "SELECT id_user, username, role, email, biography FROM youshare.users WHERE lower(username)=lower(%s)",
+                [username])
+
+            user = cur.fetchone()
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
 
         return user is not None
 
     def emailExist(self, email):
-        cur = self.conn.cursor()
-        cur.execute(
-            "SELECT id_user, username, role, email, biography FROM youshare.users WHERE lower(email) = lower(%s)",
-            [email])
-        user = cur.fetchone()
-        self.conn.commit()
+        cur = None
+        conn = None
+
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+
+            cur.execute(
+                "SELECT id_user, username, role, email, biography FROM youshare.users WHERE lower(email) = lower(%s)",
+                [email])
+
+            user = cur.fetchone()
+
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
+
         return user is not None
 
     def emailAndIdDifferentExist(self, email, id_user):
-        cur = self.conn.cursor()
-        cur.execute(
-            "SELECT id_user, username, role, email, biography FROM youshare.users WHERE lower(email) = lower(%s) and id_user!=%s",
-            [email, id_user])
-        user = cur.fetchone()
-        self.conn.commit()
+        cur = None
+        conn = None
+
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+
+            cur.execute(
+                "SELECT id_user, username, role, email, biography FROM youshare.users WHERE lower(email) = lower(%s) and id_user!=%s",
+                [email, id_user])
+
+            user = cur.fetchone()
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
         return user is not None
 
     def usernameAndIdDifferentExist(self, username, id_user):
-        cur = self.conn.cursor()
-        cur.execute(
-            "SELECT id_user, username, role, email, biography FROM youshare.users WHERE lower(username)=lower(%s) AND id_user != %s",
-            [username, id_user])
-        user = cur.fetchone()
-        self.conn.commit()
-        cur.close()
 
+        cur = None
+        conn = None
+
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+
+            cur.execute(
+                "SELECT id_user, username, role, email, biography FROM youshare.users WHERE lower(username)=lower(%s) AND id_user != %s",
+                [username, id_user])
+
+            user = cur.fetchone()
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+        conn.commit()
+        cur.close()
+        self.db.freeConnexion()
         return user is not None
 
     def grantAdmin(self, id_user):
-        # Verify if user exist and send 404 if not
-        user = self.getUser(id_user)
 
-        if user['role'] == enum.ROLE_ADMIN:
+        cur = None
+        conn = None
+
+        user = self.getUser(id_user)
+        if user.role == enum.ROLE_ADMIN:
             raise falcon.HTTPBadRequest("Bad Request", "User is already an admin")
 
-        cur = self.conn.cursor()
-        cur.execute("UPDATE youshare.users SET role = %s WHERE id_user = %s "
-                    "RETURNING id_user,username,role,email,biography", [enum.ROLE_ADMIN, id_user])
-        user = cur.fetchone()
-        self.conn.commit()
+        try:
+            # Verify if user exist and send 404 if not
+
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+
+            cur.execute("UPDATE youshare.users SET role = %s WHERE id_user = %s "
+                        "RETURNING id_user, username, role, email, biography,picture", [enum.ROLE_ADMIN, id_user])
+
+            data = cur.fetchone()
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
 
-        return {
-            "id_user": user[0],
-            "username": user[1],
-            "role": user[2],
-            "email": user[3],
-            "biography": user[4]
-        }
+        user = Users.from_tuple(data)
 
-    def verifyPassword(self,id_user,password):
+        return user
 
-        cur = self.conn.cursor()
+    def verifyPassword(self, id_user, password):
+        cur = None
+        conn = None
 
-        cur.execute("SELECT password FROM youshare.users WHERE id_user = %s",
-                    [id_user])
-        user = cur.fetchone()
-        password = str(password).encode('utf-8')
-        hashedPassword = str(user[0]).encode('utf-8')
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
-        self.conn.commit()
+            cur.execute("SELECT password FROM youshare.users WHERE id_user = %s",
+                        [id_user])
+
+            user = cur.fetchone()
+
+            password = str(password).encode('utf-8')
+            hashedPassword = str(user[0]).encode('utf-8')
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
         return bcrypt.checkpw(password, hashedPassword)
 
     def updateUser(self, body):
@@ -182,80 +311,139 @@ class UserService:
             hashedPassword = hashedPassword.decode('utf-8')
             params.append(hashedPassword)
 
-        sql += " WHERE id_user = %s RETURNING id_user,username,role,email,biography "
+        sql += " WHERE id_user = %s RETURNING id_user, username, role, email, biography,picture "
         params.append(body['id_user'])
 
-        cur = self.conn.cursor()
-        cur.execute(sql, params)
-        newUser = cur.fetchone()
+        cur = None
+        conn = None
 
-        self.conn.commit()
+        try:
+
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+            cur.execute(sql, params)
+            data = cur.fetchone()
+
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
 
-        return {
-            "id_user": newUser[0],
-            "username": newUser[1],
-            "role": newUser[2],
-            "email": newUser[3],
-            "biography": newUser[4]
-        }
+        user = Users.from_tuple(data)
+
+        return user
 
     def registerUser(self, email, username, password: str):
-        cur = self.conn.cursor()
 
         if self.emailExist(email):
-            self.conn.commit()
-            cur.close()
             raise falcon.HTTPConflict('Conflict', 'The email address is already used')
 
         if self.usernameExist(username):
-            self.conn.commit()
-            cur.close()
             raise falcon.HTTPConflict('Conflict', 'The username is already used')
 
-        password = str(password).encode('utf-8');
-        hashedPassword = bcrypt.hashpw(password, bcrypt.gensalt(10))
-        hashedPassword = hashedPassword.decode('utf-8')
-        cur.execute("INSERT INTO youshare.users(email,username,password)"
-                    " VALUES (%s,%s,%s) RETURNING id_user,username",
-                    [email, username, hashedPassword])
-        row = cur.fetchone()
+        cur = None
+        conn = None
 
-        self.conn.commit()
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+
+            password = str(password).encode('utf-8');
+            hashedPassword = bcrypt.hashpw(password, bcrypt.gensalt(10))
+            hashedPassword = hashedPassword.decode('utf-8')
+
+            cur.execute("INSERT INTO youshare.users(email,username,password)"
+                        " VALUES (%s,%s,%s) RETURNING id_user",
+                        [email, username, hashedPassword])
+
+            row = cur.fetchone()
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
         return row[0]
 
     def login(self, username, password):
-        cur = self.conn.cursor()
 
-        cur.execute("SELECT id_user,username,role,password FROM youshare.users WHERE lower(username) = lower(%s)",
-                    [username])
-        user = cur.fetchone()
+        cur = None
+        conn = None
+
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
+
+            cur.execute("SELECT id_user,password FROM youshare.users WHERE lower(username) = lower(%s)",
+                        [username])
+            user = cur.fetchone()
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+        conn.commit()
+        cur.close()
+        self.db.freeConnexion()
+
         if user is None:
-            self.conn.commit()
-            cur.close()
             raise falcon.HTTPNotFound('Not Found', 'The user is not registered yet')
+
         password = str(password).encode('utf-8')
-        hashedPassword = str(user[3]).encode('utf-8')
+        hashedPassword = str(user[1]).encode('utf-8')
+
         if not bcrypt.checkpw(password, hashedPassword):
             raise falcon.HTTPUnauthorized("Unauthorized", "the password is incorrect")
-
-        self.conn.commit()
-        cur.close()
 
         return user[0]
 
     def getPicture(self, id_user):
-        cur = self.conn.cursor()
+        cur = None
+        conn = None
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
-        cur.execute("SELECT picture FROM youshare.users WHERE id_user = %s",
-                    [id_user])
-        picture_name = cur.fetchone()
-        #TODO eliott peut être checker des erreurs ?
-        self.conn.commit()
+            cur.execute("SELECT picture FROM youshare.users WHERE id_user = %s",
+                        [id_user])
+            picture_name = cur.fetchone()
+
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
+
+        conn.commit()
         cur.close()
+        self.db.freeConnexion()
+
+        if picture_name is None or picture_name[0] is None:
+            logger.warning("User or picture not found")
+            raise falcon.HTTPNotFound('Not Found', 'The user has no picture')
 
         return picture_name[0]
 
+    def updateUserPicture(self, id_user, picture):
+        cur = None
+        conn = None
+        try:
+            conn = self.db.getConnection()
+            cur = conn.cursor()
 
+            cur.execute("UPDATE youshare.users SET picture = %s WHERE id_user = %s",
+                        [picture, id_user])
+        except BaseException as err:
+            conn.rollback()
+            logger.warning(err)
+            raise err
 
+        conn.commit()
+        cur.close()
+        self.db.freeConnexion()

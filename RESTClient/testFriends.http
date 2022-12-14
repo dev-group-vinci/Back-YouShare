@@ -77,17 +77,27 @@ Authorization: {{token}}
 
 
 ### Get a friend
-GET http://localhost:8989/friends/6
+GET http://localhost:8989/friends/4
 Authorization: {{token}}
 
 ### Add a friend
 POST http://localhost:8989/friends/6
 Authorization: {{token}}
 
+### Add mehdi
+POST http://localhost:8989/friends/4
+Authorization: {{token}}
+
+
 
 ### Delete a friend or a friend request
 DELETE http://localhost:8989/friends/6
 Authorization: {{token}}
+
+### Delete a friend or a friend request
+DELETE http://localhost:8989/friends/4
+Authorization: {{token}}
+
 
 ### Accept a friend (Eliott)
 POST http://localhost:8989/friends/6/accept

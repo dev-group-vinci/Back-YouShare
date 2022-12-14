@@ -24,6 +24,10 @@ class FriendsService:
             self.db = Db.getInstance()
 
     def getOne(self, id_user, id_friend):
+
+        if id_user == id_friend:
+            raise falcon.HTTPForbidden("Forbidden","You cannot get yourself friend request")
+
         cur = None
         conn = None
 
@@ -31,7 +35,12 @@ class FriendsService:
             conn = self.db.getConnection()
             cur = conn.cursor()
 
-            cur.execute()  # requête pour chopper le mec
+            cur.execute("SELECT CASE WHEN fr.state = %s AND fr.id_receiver = %s THEN 'received' ELSE 'sended' END as state,"
+                        "us.id_user,us.username,us.role,us.email,us.biography,us.picture "
+                        "FROM youshare.friendships fr,youshare.users us "
+                        "WHERE CASE WHEN fr.id_receiver = %s THEN us.id_user = fr.id_asker ELSE us.id_user = fr.id_receiver END "
+                        "AND ((id_receiver = %s AND id_asker = %s) OR (id_receiver = %s AND id_asker = %s))",
+                        [enum.STATE_PENDING,id_user,id_user,id_user,id_friend,id_friend,id_user])
 
             row = cur.fetchone()
         except BaseException as err:
@@ -39,11 +48,15 @@ class FriendsService:
             logger.warning(err)
             raise err
 
-        friend = Friends.from_tuple(row)
-
         conn.commit()
         cur.close()
         self.db.freeConnexion()
+
+        if row is None:
+            raise falcon.HTTPNotFound('Not found','No friend request found')
+
+        friend = Friends.from_tuple(row)
+
         return friend
 
     def getAll(self, id_user):
@@ -219,7 +232,7 @@ class FriendsService:
             cur = conn.cursor()
 
             cur.execute(
-                "SELECT state FROM youshare.friendship WHERE (id_asker = %s AND id_receiver = %s) OR (id_asker = %s AND id_receiver = %s)",
+                "SELECT state FROM youshare.friendships WHERE (id_asker = %s AND id_receiver = %s) OR (id_asker = %s AND id_receiver = %s)",
                 [id_user, id_friend, id_friend, id_user])
             state = cur.fetchone()[0]
 
@@ -232,7 +245,7 @@ class FriendsService:
         cur.close()
         self.db.freeConnexion()
 
-        if state is enum.STATE_REFUSED:
+        if state == enum.STATE_REFUSED:
             raise falcon.HTTPForbidden("Forbidden", "You cannot delete friend request which has been refused.")
         else:
             self.delete(id_user, id_friend)
@@ -360,3 +373,7 @@ class FriendsService:
             conn.rollback()
             logger.warning(err)
             raise err
+
+        conn.commit()
+        cur.close()
+        self.db.freeConnexion()

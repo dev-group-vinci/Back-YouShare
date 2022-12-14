@@ -28,3 +28,6 @@ class LikeService:
     def readNbLike(self, id_post):
         return self.abstractService.readNbItem(enum.LIKE_TABLE, id_post)
 
+    def isLiked(self, id_post, id_user):
+        return self.abstractService.isAlreadyPresent(enum.LIKE_TABLE, id_post, id_user)
+

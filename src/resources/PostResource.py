@@ -66,3 +66,11 @@ class Posts:
 
         resp.status = falcon.HTTP_201
         resp.body = dumps(nb_like, default=int)
+
+    @falcon.before(auth, enum.ROLE_USER)
+    def on_delete(self, req, resp, id_post):
+        user = req.context.user
+
+        self.postServices.deleteOne(id_post, user)
+
+        resp.status = falcon.HTTP_202

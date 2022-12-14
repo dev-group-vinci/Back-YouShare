@@ -59,7 +59,7 @@ class Comments:
 
         resp.status = falcon.HTTP_202
 
-    @falcon.before(auth, enum.ROLE_ADMIN)
+    @falcon.before(auth, enum.ROLE_USER)
     def on_delete_one(self, req, resp, id_post, id_comment):
         user = req.context.user
 

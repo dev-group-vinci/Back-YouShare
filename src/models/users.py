@@ -1,4 +1,5 @@
 import html
+from src.utils.pictureManager import convert_picture
 
 class Users:
 
@@ -13,7 +14,8 @@ class Users:
 
     @classmethod
     def from_tuple(cls, tuple):
-        return cls(*tuple)
+        temp = (tuple[0], tuple[1], tuple[2], tuple[3], tuple[4], convert_picture(tuple[5]))
+        return cls(*temp)
 
     @staticmethod
     def new_user_from_json(self, json):

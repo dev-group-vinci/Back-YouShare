@@ -80,7 +80,7 @@ class PostService:
         self.db.freeConnexion()
         return post
 
-    def readMyPosts(self, id_user):
+    def readUserPosts(self, id_user):
         cur = None
         conn = None
         try:

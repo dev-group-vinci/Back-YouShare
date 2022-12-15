@@ -15,7 +15,7 @@ class Friends:
 
     @classmethod
     def from_tuple(cls, tuple):
-        temp = (tuple[0], tuple[1], tuple[2], tuple[3], tuple[4], convert_picture(tuple[5]))
+        temp = (tuple[0], tuple[1], tuple[2], tuple[3], tuple[4], tuple[5], convert_picture(tuple[6]))
         return cls(*temp)
 
     def unescape(self):

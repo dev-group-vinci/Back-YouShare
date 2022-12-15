@@ -1,6 +1,6 @@
 -- Insertion users
-INSERT INTO youshare.users(role,username,email,password,biography) VALUES ('user','Rayan','rayan@gmail.com','$2b$10$S7q3Bh2YbmTBnkf2gqjHjOfIFSa8QbAM80tgWbKt7OWLl8l.NN2CG','Rust ?');
-INSERT INTO youshare.users(role,username,email,password,biography) VALUES ('user','Mehdi','mehdi@gmail.com','$2b$10$DYQl4ZD2wcXdOst.9KBPZuXA3KnbKqzlTm9MpqiRVLvWyrYfFeP4S','LoL ?');
+INSERT INTO youshare.users(role,username,email,password,biography,picture) VALUES ('user','Rayan','rayan@gmail.com','$2b$10$S7q3Bh2YbmTBnkf2gqjHjOfIFSa8QbAM80tgWbKt7OWLl8l.NN2CG','Rust ?','15-12-2022-17:59:326d17cb3d-db1a-4d6b-8190-d979d88b606c.jpg');
+INSERT INTO youshare.users(role,username,email,password,biography,picture) VALUES ('user','Mehdi','mehdi@gmail.com','$2b$10$DYQl4ZD2wcXdOst.9KBPZuXA3KnbKqzlTm9MpqiRVLvWyrYfFeP4S','LoL ?','15-12-2022-17:55:5661f8ebb5-c275-4b6d-afad-2dfe330dcc6d.jpg');
 INSERT INTO youshare.users(role,username,email,password,biography) VALUES ('admin','Zoe','zoe@gmail.com','$2b$10$XdK1Q5zF3OF9jhcxKW.fbuyu6pR7DxIJXPWKwmhFPfVbPVDVcV.7q','Basic fit ?');
 INSERT INTO youshare.users(role,username,email,password,biography) VALUES ('user','Loic','loic@gmail.com','$2b$10$Ka0DPV24xZziK2S8Wxiy1u/0/CFwKV4BNfpCpEOnnZvys6x0xbKlK','Un verre ?');
 INSERT INTO youshare.users(role,username,email,password,biography) VALUES ('user','Eliott','eliott@gmail.com','$2b$10$LHN9wSsLomTaLf.cCBJe6ObQk9ra4j8LhA.uQyqypOq8M2C0LJadG','Une piscine ?');

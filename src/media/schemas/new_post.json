@@ -1,0 +1,21 @@
+{
+    "title": "New post Schema",
+    "description" : "Information of the new post",
+    "type": "object",
+    "properties": {
+        "id_url": {
+            "title": "Id of the url video",
+            "type": "string",
+            "maxLength": 11
+        },
+        "text": {
+            "title": "Text of the post",
+            "type": "string",
+            "maxLength": 280
+        }
+    },
+    "required": [
+        "id_url",
+        "text"
+    ]
+}

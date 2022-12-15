@@ -1,0 +1,99 @@
+### Register
+
+POST http://localhost:8989/users/register
+Content-Type: application/json
+
+{
+  "username": "rayann",
+  "email" : "rayann@gmail.com",
+  "password" : "M0tde@"
+}
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
+### Register
+
+POST http://localhost:8989/users/register
+Content-Type: application/json
+
+{
+  "username": "zoe",
+  "email" : "zoe@gmail.com",
+  "password" : "zoe"
+}
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
+
+### Login
+
+POST http://localhost:8989/users/login
+Content-Type: application/json
+
+{
+  "username" : "rayann",
+  "password" : "M0tde@"
+}
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
+### Login
+
+POST http://localhost:8989/users/login
+Content-Type: application/json
+
+{
+  "username" : "zoe",
+  "password" : "zoe"
+}
+
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
+### GET User connected
+GET http://localhost:8989/users
+Authorization: {{token}}
+
+### Update user
+
+PUT http://localhost:8989/users
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "biography": "Je suis heureuse",
+  "password": "M0tde@"
+}
+
+### Get user by id
+
+GET http://localhost:8989/users/1
+Authorization: {{token}}
+
+### Make user admin
+
+PUT http://localhost:8989/users/1
+Authorization: {{token}}
+
+### Get picture of a user
+
+GET http://localhost:8989/users/2/picture
+Authorization: {{token}}
+
+### Get self picture
+
+GET http://localhost:8989/users/self/picture
+Authorization: {{token}}
+
+### Search username like 'value'
+
+GET http://localhost:8989/users/search/a
+Authorization: {{token}}

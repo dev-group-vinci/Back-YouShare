@@ -1,0 +1,122 @@
+### Register
+
+POST http://localhost:8989/users/register
+Content-Type: application/json
+
+{
+  "username": "mehdi",
+  "email" : "mehdi@gmail.com",
+  "password" : "mehdi"
+}
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
+
+### Register
+
+POST http://localhost:8989/users/register
+Content-Type: application/json
+
+{
+  "username": "eliott",
+  "email" : "eliott@gmail.com",
+  "password" : "123"
+}
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
+
+### Login Mehdi
+POST http://localhost:8989/users/login
+Content-Type: application/json
+
+{
+  "username" : "mehdi",
+  "password" : "mehdi"
+}
+
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
+### Login Eliott
+POST http://localhost:8989/users/login
+Content-Type: application/json
+
+{
+  "username" : "eliott",
+  "password" : "123"
+}
+
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
+### GET User connected
+GET http://localhost:8989/users
+Authorization: {{token}}
+
+### Get all friends
+GET http://localhost:8989/friends
+Authorization: {{token}}
+
+### Get all friend requests
+GET http://localhost:8989/friends/requests
+Authorization: {{token}}
+
+
+### Get all my friend requests sended
+GET http://localhost:8989/friends/self/requests
+Authorization: {{token}}
+
+
+### Get a friend
+GET http://localhost:8989/friends/4
+Authorization: {{token}}
+
+### Get a friend
+GET http://localhost:8989/friends/6
+Authorization: {{token}}
+
+
+### Add a friend
+POST http://localhost:8989/friends/6
+Authorization: {{token}}
+
+### Add mehdi
+POST http://localhost:8989/friends/4
+Authorization: {{token}}
+
+
+
+### Delete a friend or a friend request
+DELETE http://localhost:8989/friends/6
+Authorization: {{token}}
+
+### Delete a friend or a friend request
+DELETE http://localhost:8989/friends/4
+Authorization: {{token}}
+
+
+### Accept a friend (Eliott)
+POST http://localhost:8989/friends/6/accept
+Authorization: {{token}}
+
+### Accept a friend (Mehdi)
+POST http://localhost:8989/friends/4/accept
+Authorization: {{token}}
+
+
+### Refuse a friend (Eliott)
+POST http://localhost:8989/friends/6/refuse
+Authorization: {{token}}
+
+### Refuse a friend (Mehdi)
+POST http://localhost:8989/friends/4/refuse
+Authorization: {{token}}

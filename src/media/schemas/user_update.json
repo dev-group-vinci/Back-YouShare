@@ -1,0 +1,32 @@
+{
+    "title": "User update schema",
+    "description" : "All the data of a user",
+    "type": "object",
+    "properties": {
+        "username": {
+            "title": "Username",
+            "type": "string",
+            "maxLength": 60
+        },
+        "email": {
+            "title": "Email address",
+            "type": "string",
+            "pattern": "^\\S+@\\S+\\.\\S+$",
+            "format": "email",
+            "maxLength": 128
+        },
+        "biography": {
+            "title": "Biography of the user",
+            "type" : "string",
+            "maxLength": 200
+        },
+        "password": {
+            "title": "Password",
+            "type": "string"
+        },
+        "new_password": {
+            "title": "New password",
+            "type": "string"
+        }
+    }
+}

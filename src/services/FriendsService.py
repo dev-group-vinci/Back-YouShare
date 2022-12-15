@@ -108,8 +108,8 @@ class FriendsService:
                 "FROM youshare.friendships as fr, youshare.users as us "
                 "WHERE us.id_user = id_asker "
                 "AND fr.id_receiver = %s "
-                "AND fr.state != %s ",
-                (id_user, enum.STATE_ACCEPTED)
+                "AND fr.state != %s AND fr.state != %s",
+                (id_user, enum.STATE_ACCEPTED, enum.STATE_REFUSED)
             )
 
             # Récupérez les résultats de la requête

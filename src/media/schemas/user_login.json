@@ -1,0 +1,20 @@
+{
+    "title": "User Schema",
+    "description" : "All the data of a user",
+    "type": "object",
+    "properties": {
+        "username": {
+            "title": "Username",
+            "type": "string",
+            "maxLength": 60
+        },
+        "password": {
+            "title": "Password",
+            "type": "string"
+        }
+    },
+    "required": [
+        "username",
+        "password"
+    ]
+}

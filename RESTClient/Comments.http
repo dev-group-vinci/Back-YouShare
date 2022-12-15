@@ -1,0 +1,49 @@
+### Login
+
+POST http://localhost:8989/users/login
+Content-Type: application/json
+
+{
+  "username" : "rayan",
+  "password" : "M0tde@"
+}
+
+> {%
+client.global.set("token", response.body.token);
+%}
+
+
+### Create comment on a post
+
+POST http://localhost:8989/posts/comments/
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "id_post": 6,
+  "id_comment_parent": null,
+  "text": "Trop bien expliqué mais vidéo un peu longue !"
+}
+
+### Get comments of a post
+GET http://localhost:8989/posts/6/comments/
+Authorization: {{token}}
+
+
+### Delete all comments of a post
+
+DELETE http://localhost:8989/posts/6/comments/
+Content-Type: application/json
+Authorization: {{token}}
+
+
+### Delete a comment of a post
+DELETE http://localhost:8989/posts/6/comments/36
+Content-Type: application/json
+Authorization: {{token}}
+
+### Delete all comments of a post
+
+DELETE http://localhost:8989/posts/comments/21
+Content-Type: application/json
+Authorization: {{token}}

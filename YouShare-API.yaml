@@ -213,6 +213,67 @@ paths:
           description: No user found
         401:
           description: Missing authentication
+  /users/{id_user}/picture:
+    get:
+      parameters:
+        - name: id_user
+          description: the id of the user
+          in: path
+          schema:
+            type: integer
+            example: 1
+          required: true
+      tags:
+        - users
+      summary: Get the azure url of the user picture with a sas token in it
+      security:
+        - jwtAuth: [ ]
+      responses:
+        200:
+          description: the azure url of the user picture with a sas token in it
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/picture'
+        404:
+          description: Picture found
+        401:
+          description: Missing authentication
+  /users/self/picture:
+    get:
+      tags:
+        - users
+      summary: Get the azure url of the connected user picture with a sas token in it
+      security:
+        - jwtAuth: [ ]
+      responses:
+        200:
+          description: the azure url of the connected user picture with a sas token in it
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/picture'
+        404:
+          description: Picture found
+        401:
+          description: Missing authentication
+    post:
+      tags:
+        - users
+      summary: Upload a picture to Azure blob storage
+      requestBody:
+        description: The image to upload
+        content:
+          image/*:
+            schema:
+              type: string
+              format: binary
+      responses:
+        200:
+          description: Image uploaded
+        401:
+          description: Missing authentication
+
   /friends:
     get:
       summary: Get all friends
@@ -1007,3 +1068,10 @@ components:
         email: mehdi@gmail.com
         biography: I love sharing video
         status: pending
+    picture:
+      type: object
+      properties:
+        url:
+          type: string
+      example:
+        url: https://blobpfedev.blob.core.windows.net/pfedev/helloworld12345.png?sp=r&st=2022-12-07T16:23:50Z&se=2022-12-08T00:23:50Z&spr=https&sv=2021-06-08&sr=b&sig=EQHvmBjwHAs%2BhVfg1JTsxpJJ%2B%2B7ah3NTN8NzRs22kuk%3D
